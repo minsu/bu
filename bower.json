@@ -1,0 +1,30 @@
+{
+  "name": "bu",
+  "version": "0.0.0",
+  "homepage": "https://github.com/minsu/bu",
+  "authors": [
+    "Minsu Kang <minsu@netsco.kr>"
+  ],
+  "description": "BU is a simple UI framework for a web application using AngularJS and CSS.",
+  "keywords": [
+    "ui",
+    "framework",
+    "angularjs"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "modernizr": "~2.7.2",
+    "angular": "~1.2.14",
+    "angular-animate": "~1.2.14",
+    "angular-touch": "~1.2.14"
+  }
+}

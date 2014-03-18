@@ -1,0 +1,20 @@
+{
+  "name": "BU",
+  "version": "0.0.1",
+  "author": "MSK <minsu@netsco.kr>",
+  "description": "BU is a simple UI framework for a web application using AngularJS and CSS.",
+  "keywords": "angularjs css ui framework",
+  "private": false,
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-compass": "~0.7.2",
+    "grunt-contrib-watch": "~0.6.0",
+    "grunt-contrib-connect": "~0.7.1"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github/minsu/bu"
+  }
+}

@@ -1,15 +1,10 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
+# .gitignore
+#====================================================================
 
-pids
-logs
-results
-
+.sass-cache
+.dropbox
+*/.DS_Store
+bower_components
+release/*
 npm-debug.log
 node_modules
