@@ -1,0 +1,43 @@
+//-------------------------------------------------------------------
+// bu component: panel
+//-------------------------------------------------------------------
+
+// LAYOUT //
+.bu.panel {
+  position: absolute;
+  height  : 100%;
+  top     : 0;
+  left    : 0;
+  bottom  : 0;
+
+  &.inactive { display: none; }
+  &.ready    { display: block; }
+  &.active   { display: block; }
+
+  &.left  {
+    @include transform(translateX(-280px));
+    &.showup {
+      @include responsive(large) {
+        @include transform(translateX(0));
+      }
+    }
+  }
+  &.right {
+    @include transform(translateX(280px));
+    &.showup {
+      @include responsive(large) {
+        @include transform(translateX(0));
+      }
+    }
+  }
+}
+
+// DECORATION //
+.bu.panel {
+  &.left.shadow {
+    @include box-shadow(inset -3px 0 3px black(.1));
+  }
+  &.right.shadow {
+    @include box-shadow(inset 3px 0 3px black(.1));
+  }
+}

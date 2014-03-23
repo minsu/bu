@@ -1,0 +1,20 @@
+<script type="text/ng-template" id="bu.component.screen.html">
+<div class="bu screen {{ state }}"
+     ng-style="{'z-index': zindex()}"
+     ng-transclude>
+</div>
+</script>
+
+<script type="text/ng-template" id="bu.component.window.html">
+<div class="bu window {{ state }}"
+     ng-style="{'z-index': zindex()}"
+     ng-transclude>
+</div>
+
+</script>
+<script type="text/ng-template" id="bu.component.panel.html">
+<div class="bu panel {{ state }} {{ position }}"
+     ng-style="{'z-index': zindex(), 'width': width + 'px'}"
+     ng-transclude>
+</div>
+</script>

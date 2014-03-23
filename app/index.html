@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <title><!-- @echo title --></title>
+
+  <!-- mobile webapp configuration -->
+  <meta name="apple-mobile-web-app-capable" content="yes"><!-- full screen -->
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="transparent">
+  <meta name="format-detection" content="telephone=no"><!-- no phone number recognition -->
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"><!-- fixed scale to 1.0 -->
+
+  <!-- app meta information -->
+  <meta name="description" content="<!-- @echo description -->">
+  <meta name="keywords" content="<!-- @echo keywords -->">
+  <meta name="author" content="<!-- @echo author -->">
+
+  <!-- @if BUILD_MODE == 'DEVELOPMENT' -->
+  <link rel="stylesheet" type="text/css" href="static/css/app.css">
+  <link rel="stylesheet" type="text/css" href="static/css/bu.css">
+
+  <script src="static/scripts/vendor/modernizr.js"></script>
+  <script src="static/scripts/vendor/jquery.min.js"></script>
+  <script src="static/scripts/vendor/lodash.min.js"></script>
+  <script src="static/scripts/vendor/TweenMax.min.js"></script>
+
+  <script src="static/scripts/vendor/angular.min.js"></script>
+  <script src="static/scripts/vendor/angular-animate.min.js"></script>
+  <script src="static/scripts/vendor/angular-touch.min.js"></script>
+  <!-- @endif -->
+
+  <!-- @if BUILD_MODE == 'RELEASE' -->
+  <link rel="stylesheet" type="text/css" href="static/css/app.min.css">
+  <link rel="stylesheet" type="text/css" href="static/css/bu.min.css">
+  <script src="static/scripts/vendor.min.js"></script>
+  <!-- @endif -->
+</head>
+
+<body data-ng-controller="app.$controller" style="overflow:hidden">
+
+  <div class="bu screens ng-cloak"
+       ng-controller="bu.$controller" bu-screens>
+
+    <div class="bu bar top shadow"
+         style="z-index:{{ bu.ui.zindex.top + 1 }}"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-cell>
+        <div class="bu light round button"
+             ng-click="bu.activateScreen('content')">Content
+        </div>
+      </div>
+      <div class="bu element" bu-cell>
+        <div class="bu light round button"
+             ng-click="bu.activateScreen('home')">Home
+        </div>
+      </div>
+      <div class="bu element" bu-cell>
+        <div class="bu light round button"
+             ng-click="bu.activateScreen('widgets')">Widgets
+        </div>
+      </div>
+    </div>
+
+    <!-- @include views/home.html -->
+    <!-- @include views/content.html -->
+    <!-- @include views/widgets.html -->
+  </div>
+  <!-- templates -->
+  <!-- @include views/templates.html -->
+
+  <!-- @if BUILD_MODE == 'DEVELOPMENT' -->
+  <script src="static/scripts/app.js"></script>
+  <script src="static/scripts/bu.js"></script>
+
+  <script src="static/scripts/modules/bu.state.js"></script>
+  <script src="static/scripts/modules/bu.events.js"></script>
+  <script src="static/scripts/modules/bu.service.js"></script>
+  <script src="static/scripts/modules/bu.controller.js"></script>
+  <script src="static/scripts/modules/bu.component.bu.js"></script>
+  <script src="static/scripts/modules/bu.component.misc.js"></script>
+  <script src="static/scripts/modules/bu.component.screen.js"></script>
+  <script src="static/scripts/modules/bu.component.screens.js"></script>
+  <script src="static/scripts/modules/bu.component.window.js"></script>
+  <script src="static/scripts/modules/bu.component.panel.js"></script>
+  <script src="static/scripts/modules/bu.component.condense.js"></script>
+  <script src="static/scripts/modules/bu.component.distribute.js"></script>
+  <!-- @endif -->
+
+  <!-- @if BUILD_MODE == 'RELEASE'  -->
+  <script>/* google analytics code */</script>
+  <script src="static/scripts/app.min.js"></script>
+  <script src="static/scripts/bu.min.js"></script>
+  <!-- @endif -->
+  </body>
+</html>

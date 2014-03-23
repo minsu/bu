@@ -1,0 +1,59 @@
+//-------------------------------------------------------------------
+// bu button
+//-------------------------------------------------------------------
+
+// CONTAINERS //
+.bu.buttons {
+  display       : inline-block;
+  white-space   : nowrap;
+  vertical-align: middle;
+
+  &:first-child { margin-left : 0; }
+  &:last-child  { margin-right: 0; }
+}
+
+// LAYOUT //
+.bu.button {
+  display     : inline-block;
+  position    : relative;
+  padding     : .75rem 1rem;
+
+  border     : 1px solid;
+  line-height: 1;
+
+  font-size     : 1rem;
+  text-align    : center;
+  vertical-align: middle;
+}
+
+// DECORATION //
+.bu.button {
+  cursor: pointer;
+  @include border-radius(4px);
+
+  &.round  { border-radius: 100rem !important; }
+  &.square { border-radius: 0 !important; }
+}
+
+// COLORS //
+.bu.button {
+  color           : black(.8);
+  border-color    : black(.8);
+  background-color: transparent;
+
+  &:hover {
+    color       : black(1);
+    border-color: black(1);
+  }
+
+  &.dark  { /* default */ }
+  &.light {
+    color       : white(.85);
+    border-color: white(.85);
+
+    &:hover {
+      color       : white(1);
+      border-color: white(1);
+    }
+  }
+}

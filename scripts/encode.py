@@ -8,4 +8,4 @@ with open(sys.argv[1], 'rb') as im:
 result = []
 for ch in data:
 	result.append('%c' % ch)
-print('url(data:image/png;base64,%s);' % ''.join(result))
+print('url(data:image/png;base64,%s)' % ''.join(result))

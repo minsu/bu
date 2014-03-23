@@ -1,0 +1,53 @@
+//-------------------------------------------------------------------
+// bu component: bar
+//-------------------------------------------------------------------
+
+// LAYOUT //
+.bu.bar {
+
+  display : block;
+  position: absolute;
+  width   : 100%;
+
+  &.top    { top   : 0; }
+  &.bottom { bottom: 0; }
+
+  @include responsive(small)  { padding:  .5rem .5rem; }
+  @include responsive(medium) { padding: .75rem  1rem; }
+  @include responsive(large)  { padding: .75rem  1rem; }
+
+  /* sub-container: element */
+  .element {
+    display: inline-block;
+    vertical-align: middle;
+    & > * {
+      margin: 0 .25rem;
+      &:first-child { margin-left : 0 !important; }
+      &:last-child  { margin-right: 0 !important; }
+    }
+  }
+
+  /* element: text */
+  .element.text {
+    text-overflow: ellipsis;
+    white-space  : nowrap;
+    overflow     : hidden;
+    font-size    : 1.1rem;
+  }
+}
+
+// DECORATION //
+.bu.bar {
+  @include transition(all $simple-transition-duration ease);
+  background-color: transparent;
+  &.shadow {
+    background-color: rgba(0, 0, 0, .5);
+  }
+}
+
+// COLOR //
+.bu.bar > .element.text {
+  color: black(.8);
+  &.light { color: white(.8); }
+  &.dark  { color: black(.8); }
+}

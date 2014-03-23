@@ -1,0 +1,37 @@
+//-------------------------------------------------------------------
+// bu.constants
+//-------------------------------------------------------------------
+$palettes: (
+  grey: (
+    x-dark : #222222,
+    dark   : #555555,
+    base   : #888888,
+    light  : #BBBBBB,
+    x-light: #EEEEEE
+  ),
+  shadow: (
+    x-dark : rgba(0, 0, 0, .9),
+    dark   : rgba(0, 0, 0, .7),
+    base   : rgba(0, 0, 0, .5),
+    light  : rgba(0, 0, 0, .3),
+    x-light: rgba(0, 0, 0, .1)
+  ),
+  text: (
+    x-dark : #111111,
+    dark   : #2F2F2F,
+    base   : #333333,
+    light  : #666666,
+    x-light: #999999
+  ),
+  invert: (
+    x-dark : #FFFFFF,
+    dark   : rgba(255, 255, 255, .925),
+    base   : rgba(255, 255, 255, .825),
+    light  : rgba(255, 255, 255, .725),
+    x-light: rgba(255, 255, 255, .625)
+  )
+);
+
+// RESPONSIVE BREAKS //
+$responsive-small :  480px; // small <= 480
+$responsive-medium: 1024px; // 480 < medium <= 1024, 1024 < large

@@ -1,0 +1,42 @@
+//-------------------------------------------------------------------
+// bu.fonts
+//-------------------------------------------------------------------
+
+$font-include-english : false!default;
+$font-include-korean  : true !default;
+$font-include-initials: false!default;
+
+// "freight-text-pro"     : 400, 700 (normal/italic) sans-serif
+// "jaf-bernino-sans"     : 300, 400, 600, 700 (normal) serif
+// "Alphabet of Children" : no styles
+// "NaumGothic"           : no styles
+
+$font-ui-default     : "Helvetica, sans-serif";
+$font-content-default: "Helvetica, serif";
+$font-header-default : "Helvetica, sans-serif";
+
+$font-ui-english     : null;
+$font-content-english: null;
+$font-header-english : null;
+$font-ui-korean      : null;
+$font-content-korean : null;
+$font-header-korean  : null;
+
+@if $font-include-korean == true {
+  $font-ui-korean     : '나눔고딕', NanumGothic, '맑은고딕', 'Malgun Gothic', 'Apple SD Gothic Neo', '굴림', Gulim !global;
+  $font-content-korean: '나눔고딕', NanumGothic, '맑은고딕', 'Malgun Gothic', 'Apple SD Gothic Neo', '굴림', Gulim !global;
+  $font-header-korean : '나눔고딕', NanumGothic, '맑은고딕', 'Malgun Gothic', 'Apple SD Gothic Neo', '굴림', Gulim !global;
+}
+@if $font-include-english == true {
+  $font-ui-english     : 'jaf-bernino-sans' !global;
+  $font-content-english: 'freight-text-pro' !global;
+  $font-header-english : 'jaf-bernino-sans' !global;
+}
+
+$font-family-ui: $font-ui-english, $font-ui-korean, $font-ui-default;
+$font-family-content: $font-content-english, $font-content-korean, $font-content-default;
+$font-family-header: $font-header-english, $font-header-korean, $font-header-default;
+
+@import "bu.fonts.constants";
+
+

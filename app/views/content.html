@@ -1,0 +1,37 @@
+<div bu-screen="{name: 'content', responsive: 'left'}">
+  <!-- window -->
+  <div bu-window="{panelWidth: 280}"
+       style="background-color:lightgray">
+    <div class="bu light toolbar bottom"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"
+             ng-click="bu.screens['content'].togglePanel('left')"></div>
+      </div>
+      <div class="bu element text" bu-cell>Content</div>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- panel -->
+  <div class="shadow scrollable"
+       style="background-color:lightgray"
+       bu-panel="{
+         'width'   : 280,
+         'position': 'left',
+       }">
+    <div class="screen-center bu grey large coffee icon"></div>
+    <div class="bu light toolbar bottom"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+      <div class="bu element text" bu-cell>Left</div>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+    </div>
+  </div>
+</div>

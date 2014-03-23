@@ -1,0 +1,89 @@
+//-------------------------------------------------------------------
+// bu component : toolbar
+//-------------------------------------------------------------------
+.bu.toolbar {
+
+  display : block;
+  position: absolute;
+  overflow: hidden;
+  width   : 100%;
+
+  &.top    { top   : 0; }
+  &.bottom { bottom: 0; }
+
+  @include responsive(small)  { padding: 6px; }
+  @include responsive(medium) { padding: 8px; }
+  @include responsive(large)  { padding: 8px; }
+
+  /* sub-container: element */
+  .element {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* element: text */
+  .element.text {
+    text-overflow: ellipsis;
+    white-space  : nowrap;
+    overflow     : hidden;
+    font-size    : 1rem;
+    padding      : 0 1rem;
+  }
+}
+
+// COLOR //
+.bu.toolbar {
+  &.light  {
+    background-color: white;
+    color: black(.8);
+  }
+  &.dark   {
+    background-color: black;
+    color: white(.8);
+  }
+}
+
+// components : toolbar elements
+//-------------------------------------------------------------------
+
+// PROGRESS
+// <div class="progress">
+//   <div class="active"
+//        data-ng-style="{
+//          'left' : ((current.page - 1) / current.pages) * 100 + '%',
+//          'width': (1 / current.pages) * 100 + '%'
+//        }">
+//   </div>
+// </div>
+.bu.toolbar .element .progress {
+  display         : none; // DISPLAY SETTINGS
+
+  position        : relative;
+  width           : 100%;
+  height          : 3px;
+  margin-bottom   : 8px;
+  background-color: palette(shadow, x-light);
+
+  .active {
+    position: absolute;
+    top     : 0;
+    bottom  : 0;
+    background-color: palette(shadow, base);
+    @include transition(.25s ease-in-out);
+  }
+}
+
+// PAGE
+// <div class="pages">
+//   <div class="page">
+//     {{ current.page }} / {{ current.pages }}
+//   </div>
+// </div>
+.bu.toolbar .element .pages {
+  position     : relative;
+  margin       : 0 auto;
+  margin-bottom: 4px;
+  .page {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,208 @@
+//-------------------------------------------------------------------
+// bu.scss
+//-------------------------------------------------------------------
+@import "compass/css3";
+
+@import "modules/bu.constants";
+@import "modules/bu.functions";
+@import "modules/bu.variables";
+@import "modules/bu.mixins";
+@import "modules/bu.fonts";
+@import "modules/bu.icons";
+@import "modules/bu.basic";
+@import "modules/bu.commons";
+
+// components
+@import "modules/bu.component.screen";
+@import "modules/bu.component.button";
+@import "modules/bu.component.window";
+@import "modules/bu.component.panel";
+@import "modules/bu.component.bar";
+@import "modules/bu.component.toolbar";
+
+// HTML STYLE (UI) //
+html {
+  font-family   : $font-family-ui;
+  font-weight   : 200;
+  font-style    : normal;
+  letter-spacing: -1px;
+
+  @include responsive(small)  {
+    font-size     : 16px;
+  }
+  @include responsive(medium) {
+    font-size     : 18px;
+  }
+  @include responsive(large)  {
+    font-size     : 18px;
+  }
+
+  line-height    : 1;
+  white-space    : nowrap;
+  text-align     : center;
+  text-decoration: none;
+
+  /* miscellaneous */
+  -webkit-user-select: none;
+  -moz-user-select   : none;
+  -ms-user-select    : none;
+  user-select        : none;
+
+  text-rendering        : optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -webkit-touch-callout : none;
+}
+
+
+// animation : slide (show/hide)
+//-------------------------------------------------------------------
+.bu.slide {
+
+  $animation-duration: .5s;
+  $slide-out-movement: 25%;
+
+  &.ng-enter   , &.ng-leave,      /* enter / leave */
+  &.ng-hide-add, &.ng-hide-remove /* show  / hide  */ {
+    display: block !important;
+    @include transition($animation-duration ease-in-out);
+  }
+
+
+  /* from left to right */
+  &.left {
+    &.ng-enter, &.ng-hide-remove {
+      z-index: 2;
+      @include transform(translateX(-100%));
+      &.ng-enter-active, &.ng-hide-remove-active {
+        @include transform(translateX(0));
+      }
+    }
+    &.ng-leave, &.ng-hide-add {
+      z-index: 1;
+      @include transform(translateX(0));
+      &.ng-leave-active, &.ng-hide-add-active {
+        @include transform(translateX($slide-out-movement));
+      }
+    }
+  }
+  /* from right to left */
+  &.right {
+    &.ng-enter, &.ng-hide-remove {
+      z-index: 2;
+      @include transform(translateX(100%));
+      &.ng-enter-active, &.ng-hide-remove-active {
+        @include transform(translateX(0));
+      }
+    }
+    &.ng-leave, &.ng-hide-add {
+      z-index: 1;
+      @include transform(translateX(0));
+      &.ng-leave-active, &.ng-hide-add-active {
+        @include transform(translateX(-1 * $slide-out-movement));
+      }
+    }
+  }
+}
+
+// component : cover-picture
+//-------------------------------------------------------------------
+.bu.cover-picture {
+  position: relative;
+  width   : 100%;
+
+  background-size    : cover;
+  background-color   : black(.4);
+  background-position: center;
+
+  .bu.block {
+    position        : absolute;
+    width           : 100%;
+    padding-top     : .5em;
+    padding-bottom  : .5em;
+    background-color: palette(shadow);
+    bottom          : 0;
+
+    .bu.line {
+      color: palette(invert);
+    }
+  }
+}
+.bu.panel .cover-picture {
+  height: 200px;
+}
+
+
+// component : bu-list
+//-------------------------------------------------------------------
+.bu.list {
+  padding: 1em;
+
+  .bu.block {
+    display       : block;
+    font-size     : .9rem;
+    padding-bottom: .5rem;
+    margin-bottom : .5rem;
+    border-bottom : 1px solid palette(shadow, x-light);
+  }
+}
+
+// component : bu-block
+//-------------------------------------------------------------------
+.bu.block {
+  &[data-emphasis="1"] {
+    .bu.line {
+      text-align: left;
+    }
+  }
+  &[data-emphasis="2"] {
+    .bu.line {
+      text-align: center;
+    }
+  }
+}
+
+// component : bu-line
+//-------------------------------------------------------------------
+.bu.line {
+  white-space: normal;
+  text-align : left;
+
+  /* TITLE */
+  &[data-type="title"] {
+    font-weight: 700;
+
+    &[data-level="1"] {
+      font-size: 1.8em;
+    }
+    &[data-level="2"] {
+      font-size: 1.6em;
+    }
+    &[data-level="3"] {
+      font-weight: normal;
+      font-size  : 1.4em;
+    }
+    &[data-level="4"] {
+      font-weight: normal;
+      font-size  : 1.2em;
+    }
+    &[data-level="5"] {
+      font-style : italic;
+    }
+    &[data-level="6"] {}
+  }
+}
+
+.bu.picture {
+  &[data-style="gallery"] {
+    img {
+      position : absolute;
+      top      : 0;
+      left     : 0;
+      right    : 0;
+      bottom   : 0;
+      max-width: 100%;
+      height   : auto;
+      margin   : auto;
+    }
+  }
+}

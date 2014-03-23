@@ -7,6 +7,7 @@
  * - to watch changes,         `grunt watch`
  */
 module.exports = function(grunt) {
+
   var rewriteRulesSnippet = require(
     'grunt-connect-rewrite/lib/utils').rewriteRequest;
 
@@ -37,6 +38,7 @@ module.exports = function(grunt) {
           description: '<%= pkg.description %>',
         },
       },
+
       development: {
         src : 'app/index.html',
         dest: 'release/index.html',
@@ -78,7 +80,7 @@ module.exports = function(grunt) {
         tasks: ['env:development', 'compass:development'],
       },
       html: {
-        files: ['app/index.html', 'src/views/**/*'],
+        files: ['app/index.html', 'app/views/**/*'],
         tasks: ['env:development', 'preprocess:development'],
       },
       scripts: {
@@ -96,7 +98,7 @@ module.exports = function(grunt) {
       scripts: {
         expand: true,
         cwd   : 'app/scripts',
-        src   : ['**'],
+        src   : ['**/*'],
         dest  : 'release/static/scripts/',
       },
       resources: {
@@ -127,7 +129,7 @@ module.exports = function(grunt) {
       postrelease: [
         'release/temp/**/*',
         'release/static/css/app.css',
-        'release/static/css/buk.css',
+        'release/static/css/bu.css',
       ],
     },
 
@@ -156,8 +158,24 @@ module.exports = function(grunt) {
           'release/static/scripts/app.min.js': [
             'app/scripts/app.js',
           ],
+          'release/static/scripts/bu.min.js': [
+            'app/scripts/bu.js',
+            'app/scripts/modules/bu.controller.js',
+            'app/scripts/modules/bu.state.js',
+            'app/scripts/modules/bu.events.js',
+            'app/scripts/modules/bu.service.js',
+            'app/scripts/modules/bu.component.bu.js',
+            'app/scripts/modules/bu.component.misc.js',
+            'app/scripts/modules/bu.component.screen.js',
+            'app/scripts/modules/bu.component.screens.js',
+            'app/scripts/modules/bu.component.panel.js',
+            'app/scripts/modules/bu.component.window.js',
+            'app/scripts/modules/bu.component.condense.js',
+            'app/scripts/modules/bu.component.distribute.js',
+          ],
           'release/static/scripts/vendor.min.js': [
             'src/scripts/vendor/modernizr.js',
+            'src/scripts/vendor/jquery.min.js',
             'src/scripts/vendor/TweenMax.min.js',
             'src/scripts/vendor/lodash.min.js',
 
@@ -194,8 +212,8 @@ module.exports = function(grunt) {
           middleware: function(connect, options) {
             return [
               rewriteRulesSnippet,
-              connect.static(require('path').resolve(options.base))
-            ]
+              connect.static(require('path').resolve('release')),
+            ];
           },
         }
       }
@@ -250,7 +268,7 @@ module.exports = function(grunt) {
     grunt.task.run([
       'configureRewriteRules',
       'connect:development',
-    ])
+    ]);
   });
 
   grunt.registerTask('default', ['development']);

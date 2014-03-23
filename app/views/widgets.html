@@ -1,0 +1,67 @@
+<div bu-screen="{name: 'widgets', responsive: 'right'}">
+  <!-- window -->
+  <div bu-window="{panelWidth: 280}"
+       bu-background="{
+        src     : '/static/images/space.jpg',
+        size    : 'cover',
+        position: 'center center',
+       }">
+    <div class="bu light toolbar bottom"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"
+             ng-click="bu.screens['widgets'].togglePanel('left')"></div>
+      </div>
+      <div class="bu element text" bu-cell>Widgets</div>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"
+             ng-click="bu.screens['widgets'].togglePanel('right')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- panel -->
+  <div class="shadow scrollable"
+       style="background-color:lightgray"
+       bu-panel="{
+         'width'   : 280,
+         'position': 'right',
+       }">
+
+    <div class="screen-center bu grey large coffee icon"></div>
+    <div class="bu light toolbar bottom"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+      <div class="bu element text" bu-cell>
+        Right
+      </div>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+    </div>
+  </div>
+  <div class="shadow scrollable"
+       style="background-color:lightgray"
+       bu-panel="{
+         'width'   : 280,
+         'position': 'left',
+       }">
+
+    <div class="screen-center bu grey large coffee icon"></div>
+    <div class="bu light toolbar bottom"
+         bu-distribute="row" bu-condense>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+      <div class="bu element text" bu-cell>
+        The Adventures of Sherlock Holmes
+      </div>
+      <div class="bu element text">1/2</div>
+      <div class="bu element" bu-condense>
+        <div class="bu gray medium coffee icon link"></div>
+      </div>
+    </div>
+  </div>
+</div>
