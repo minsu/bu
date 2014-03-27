@@ -6,10 +6,13 @@ var module = angular.module('bu', [])
 // $settings
 //-------------------------------------------------------------------
 module.constant('bu.$settings', {
+  BU_ANIMATION      : true, /* if false, css 'left' is used */
+  BU_FORCE_3D       : true, /* if false, translateX() is used */
   BU_DEBUG          : true,
-  BU_SLIDE_SPEED    : 350,      // ms
+  BU_SLIDE_SPEED    :  400, /* unit: ms */
   BU_SLIDE_DIRECTION: 'right',
 
+  /* responsive thresholds */
   BU_WIDTH_SMALL : 480,
   BU_WIDTH_MEDIUM: 1024,
 });

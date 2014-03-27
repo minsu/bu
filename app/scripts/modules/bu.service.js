@@ -47,23 +47,34 @@ angular.module('bu')
     function x(element, x, speed) {
       var defer = $q.defer();
 
-      $log.debug('[bu:x] x    : ' + x);
-      $log.debug('[bu:x] speed: ' + speed);
+      $log.debug('[bu:x] x: ' + x + ' ,speed: ' + speed);
 
       if (!angular.isDefined(speed)) speed = $settings.BU_SLIDE_SPEED;
-      if (!browser.transitions || !browser.transforms) {
+      if (!browser.transitions ||
+          !browser.transforms  ||
+          !$settings.BU_ANIMATION) {
+        /* no animation */
         element.css('left', x + 'px');
         defer.resolve();
       } else {
-        TweenMax.to(element, speed / 1000.0, {
-          x: x,
-          y: 0,
-          z: 0.01, /* force 3D */
-          onComplete: function() {
-            $log.debug('[bu:x] done');
-            defer.resolve();
-          }
-        });
+        /* animation */
+        if ($settings.BU_FORCE_3D) {
+          TweenMax.to(element, speed / 1000.0, {
+            x: x, y: 0, z: 0.01, /* force 3D */
+            onComplete: function() {
+              $log.debug('[bu:x] done');
+              defer.resolve();
+            }
+          });
+        } else {
+          TweenMax.to(element, speed / 1000.0, {
+            css: {transform: "translateX(" + x + "px)"},
+            onComplete: function() {
+              $log.debug('[bu:x] done');
+              defer.resolve();
+            }
+          });
+        }
       }
       return defer.promise;
     }

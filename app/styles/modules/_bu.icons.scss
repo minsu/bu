@@ -8,8 +8,8 @@
 }
 
 @each $i in $fontawesome-icons {
-  @each $s in (small, medium, large) {
-    @each $c in (gray, white) {
+  @each $s in (xsmall, small, medium, large, xlarge) {
+    @each $c in (gray, white, black) {
       @if variable-exists('use-#{$i}-#{$s}-#{$c}') == true {
         .bu.icon.#{$i}.#{$s}.#{$c} {
           background-image: bu-icon($i, $s, $c);
@@ -22,31 +22,61 @@
 .bu.icon {
   display: inline-block;
   vertical-align: middle;
-  width : 24px;
-  height: 24px;
 
   background-color   : transparent;
   background-repeat  : no-repeat;
   background-position: center center;
-  @include transition(opacity $simple-transition-duration linear);
+  @include transition(opacity .25s linear);
 
   &.link {
     opacity: 0.7;
     &:hover { opacity: 1; }
   }
 
+  &.circular {
+    @include border-radius(50%);
+    border: 1px solid lightgray;
+  }
   // SIZE //
-  &.small {
+  &.xsmall {
     width : 12px;
     height: 12px;
+    &.circular {
+      width : 18px;
+      height: 18px;
+    }
+  }
+  &.small {
+    width : 16px;
+    height: 16px;
+    &.circular {
+      width: 24px;
+      height:24px;
+    }
   }
   &.medium {
     width : 24px;
     height: 24px;
+    &.circular {
+      width: 32px;
+      height:32px;
+    }
   }
   &.large {
+    width : 48px;
+    height: 48px;
+    &.circular {
+      width: 56px;
+      height: 56px;
+    }
+  }
+  &.xlarge {
     width : 64px;
     height: 64px;
+    &.circular {
+      width: 82px;
+      height: 82px;
+    }
   }
 
   &.screen-center {

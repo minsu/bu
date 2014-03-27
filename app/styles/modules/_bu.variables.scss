@@ -2,22 +2,35 @@
 // bu.variables
 //-------------------------------------------------------------------
 
-// fonts //
-$font-include-english : false;
+//-------------------------------------------------------------------
+// FONTS
+//-------------------------------------------------------------------
+$font-include-english : true;
 $font-include-korean  : true;
 $font-include-initials: false;
 
-// miscellaneous //
-$simple-transition-duration: .1s;
+//-------------------------------------------------------------------
+// COLORS
+//-------------------------------------------------------------------
+$colors: (
+  primary  : (base: #D95C5C, hover: #E75859, active: #D24B4C),
+  secondary: (base: #00B5AD, hover: #009A93, active: #00847E),
+  black    : (base: #5C6166, hover: #4C4C4C, active: #333333),
+  green    : (base: #5BBD72, hover: #58CB73, active: #4CB164),
+  red      : (base: #D95C5C, hover: #E75859, active: #D24B4C),
+  orange   : (base: #E96633, hover: #FF7038, active: #DA683B),
+  blue     : (base: #6ECFF5, hover: #1AB8F3, active: #0AA5DF),
+  purple   : (base: #564F8A, hover: #3E3773, active: #2E2860),
+  teal     : (base: #00B5AD, hover: #009A93, active: #00847E)
+);
 
-// icons //
+//-------------------------------------------------------------------
+// ICONS
 //-------------------------------------------------------------------
 // Declare icons used in the app here
 // $use-{icon-name}-{size}-{color}: true
 
-$use-coffee-small-gray  : true;
+$use-coffee-medium-white : true;
 $use-coffee-medium-gray : true;
-$use-coffee-large-gray  : true;
-$use-coffee-small-white : true;
-$use-coffee-medium-white: true;
-$use-coffee-large-white : true;
+$use-times-medium-gray  : true;
+$use-exclamation-xlarge-gray: true;

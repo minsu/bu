@@ -1,0 +1,132 @@
+//-------------------------------------------------------------------
+// component: menu
+//-------------------------------------------------------------------
+
+.bu.menu {
+  width: 100%;
+  background-color: white;
+  @include box-shadow(0 0 0 1px black(0.1));
+
+  // SIZE
+  //-----------------------------------------------------------------
+  &.medium .item { font-size: 1rem; }
+  &.small  .item { font-size: 0.875rem; }
+  &.large  .item { font-size: 1.125rem; }
+
+  &.inverted {
+    @each $color, $value in $colors {
+      &.#{$color} {
+        background-color: map-get($value, active);
+      }
+    }
+  }
+
+  // item : base
+  //-----------------------------------------------------------------
+  & > .item {
+    position: relative;
+    display: inline-block;
+    padding: 0.8em 1em;
+
+    vertical-align: middle;
+    line-height: 1;
+    text-decoration: none;
+
+    @include transition(
+      opacity    0.25s ease,
+      background 0.25s ease,
+      box-shadow 0.25s ease
+    );
+    @include box-sizing(border-box);
+    @include user-select(none);
+    -webkit-tap-highlight-color: black(0);
+  }
+
+  // border ///////////////////////////////////////////////
+  & > .item:before {
+    position: absolute;
+    content: '';
+    @include position(0, auto, auto, 0);
+    width: 1px;
+    height: 100%;
+    background-image: linear-gradient(
+      black(0.05) 0%, black(0.15)  50%, black(0.05) 100%
+    );
+  }
+  & > .item:after {
+    position: absolute;
+    content: '';
+    @include position(0, 0, auto, auto);
+    width: 1px;
+    height: 100%;
+    background-image: linear-gradient(
+      black(0.05) 0%, black(0.15)  50%, black(0.05) 100%
+    );
+  }
+  & > .item + .item:before { display: none; }
+
+  &.inverted {
+    & > .item:before {
+      background-image: linear-gradient(
+        white(0.05) 0%, white(0.20) 50%, white(0.05) 100%
+      );
+    }
+    & > .item:after {
+      background-image: linear-gradient(
+        white(0.05) 0%, white(0.20) 50%, white(0.05) 100%
+      );
+    }
+  }
+  /////////////////////////////////////////////////////////
+
+  & > .item, & > .item.link { color: black(0.75); }
+  & > .item {
+    &.active {
+      color: black(0.95);
+      background-color: color(green, 0.25);
+      &:hover {}
+    }
+    &.disabled, &.disabled:hover {
+      cursor: default !important;
+      color: black(0.2) !important;
+      background-color: transparent !important;
+    }
+  }
+  & > .item.link {
+    &:hover {
+      cursor: pointer;
+      background-color: color(green, 0.1);
+    }
+    &:active {
+      background-color: color(green, 0.15);
+    }
+  }
+
+  // item : + inverted
+  //-----------------------------------------------------------------
+  &.inverted {
+    & > .item, & > .item.link { color: white !important; }
+    & > .item {
+      &.active {
+        box-shadow: none !important;
+        background-color: white(0.2);
+      }
+    }
+    & > .item.link {
+      &:hover  { background-color: white(0.1); }
+      &:active { background-color: white(0.15); }
+    }
+  }
+
+  // item > button
+  //-----------------------------------------------------------------
+  & > .item .button {
+    position: relative;
+    top: -0.05em;
+    margin: -0.55em 0;
+    padding-bottom: 0.55em;
+    padding-top: 0.55em;
+    font-size: 0.875em;
+    @include box-shadow(none);
+  }
+}

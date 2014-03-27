@@ -1,20 +1,54 @@
 <script type="text/ng-template" id="bu.component.screen.html">
 <div class="bu screen {{ state }}"
-     ng-style="{'z-index': zindex()}"
-     ng-transclude>
+     ng-style="{'z-index': zindex()}" ng-transclude>
+</div>
+</script>
+
+<script type="text/ng-template" id="bu.component.page.html">
+<div class="bu page {{ state }}"
+     ng-style="{'z-index': zindex()}" ng-transclude>
 </div>
 </script>
 
 <script type="text/ng-template" id="bu.component.window.html">
-<div class="bu window {{ state }}"
-     ng-style="{'z-index': zindex()}"
-     ng-transclude>
+<div class="bu window"
+     ng-style="{'z-index': zindex()}" ng-transclude>
 </div>
+</script>
 
-</script>
 <script type="text/ng-template" id="bu.component.panel.html">
-<div class="bu panel {{ state }} {{ position }}"
-     ng-style="{'z-index': zindex(), 'width': width + 'px'}"
-     ng-transclude>
+<div class="bu panel {{ state }} {{ options.position }}"
+     ng-style="{
+       'z-index': zindex(),
+       'width'  : options.width + 'px'
+     }" ng-transclude>
 </div>
 </script>
+
+<script type="text/ng-template" id="bu.component.flash.html">
+<div class="bu window flash {{ state }}"
+     ng-style="{'z-index': zindex()}" ng-transclude>
+</div>
+</script>
+
+<script type="text/ng-template" id="bu.component.box.html">
+<div class="bu box" bu-distribute="column">
+	<div class="element">
+		<div class="bu xlarge circular gray exclamation icon"></div>
+	</div>
+	<div class="element title" bu-cell>{{ bu.flash.message.title }}</div>
+	<div class="element text"  bu-cell>{{ bu.flash.message.text }}</div>
+	<div class="element">
+		<div class="bu full dark link button"
+		     ng-click="bu.hideFlash()">확인</dvi>
+	</div>
+</div>
+</script>
+
+<script type="text/ng-template" id="bu.component.message.html">
+<div class="bu message">
+  <div class="element title">{{ message.title }}</div>
+  <div class="element text">{{ message.text }}</div>
+</div>
+</script>
+

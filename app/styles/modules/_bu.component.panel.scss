@@ -5,39 +5,35 @@
 // LAYOUT //
 .bu.panel {
   position: absolute;
-  height  : 100%;
   top     : 0;
   left    : 0;
   bottom  : 0;
-
   &.inactive { display: none; }
-  &.ready    { display: block; }
-  &.active   { display: block; }
-
-  &.left  {
-    @include transform(translateX(-280px));
-    &.showup {
-      @include responsive(large) {
-        @include transform(translateX(0));
-      }
-    }
-  }
-  &.right {
-    @include transform(translateX(280px));
-    &.showup {
-      @include responsive(large) {
-        @include transform(translateX(0));
-      }
-    }
-  }
+  &.ready    { display: block;}
+  &.active   { display: block;}
 }
 
 // DECORATION //
 .bu.panel {
-  &.left.shadow {
-    @include box-shadow(inset -3px 0 3px black(.1));
+  color: #CCCCCC;
+  background-color: white;
+
+  @each $color, $value in $colors {
+    &.#{$color} {
+      color: white !important;
+      background-color: color($color, 1, active);
+    }
   }
-  &.right.shadow {
-    @include box-shadow(inset 3px 0 3px black(.1));
+  &.left {
+    @include box-shadow(inset -5px 0px 3px -3px black(.35));
+    & > .toolbar {
+      @include box-shadow(inset -5px 0px 3px -3px black(.35));
+    }
+  }
+  &.right {
+    @include box-shadow(inset 5px 0px 3px -3px black(.35));
+    & > .toolbar {
+      @include box-shadow(inset 5px 0px 3px -3px black(.35));
+    }
   }
 }

@@ -1,29 +1,24 @@
 //-------------------------------------------------------------------
 // service: bu.$state
 //-------------------------------------------------------------------
-// - provides access to all UI directives
-// - provides debugging utilities for UI directives
-// - provides top-level interface
-// - global event handlers responding to window resize
-//-------------------------------------------------------------------
 angular.module('bu').factory('bu.$state',  [
-  '$log', '$q', '$window', 'bu.$settings', 'bu.$service',
+  '$log', '$q', '$window', '$rootScope',
+  'bu.$settings', 'bu.$service',
 
-  function($log, $q, $window, $settings, $bu) {
+  function($log, $q, $window, $rootScope, $settings, $bu) {
     var service = {};
 
-    service.screens = {};
     service.ui = {
       width  : 0,
       height : 0,
       loading: false, /* ajax loading */
 
       zindex : {
-        flash : 100,  /* temporary escalation */
-        top   : 30,   /* top layer */
-        middle: 20,   /* middle layer (active) */
+        flash : 100,  /* temporary escalation or flash */
+        top   : 30,   /* top layer    */
+        middle: 20,   /* middle layer */
         bottom: 10,   /* bottom layer */
-        base  : 0,    /* base zindex */
+        base  : 0,    /* base zindex  */
       },
     };
 
@@ -49,19 +44,51 @@ angular.module('bu').factory('bu.$state',  [
       });
       return result;
     }
-    function registerScreen(spec) {
-      service.screens[spec.name] = spec;
+    function register(spec) {
+      /* bu-screen */
+      if (angular.isDefined(spec.attrs.buScreen)) {
+        service.screens = service.screens || {};
+        service.screens[spec.options.name] = spec;
+        $log.debug('[bu.$state] screen registered: ' + spec.options.name);
+      }
+      /* bu-flash */
+      if (angular.isDefined(spec.attrs.buFlash)) {
+        console.assert(!angular.isDefined(service.flash));
+        service.flash = spec;
+        $log.debug('[bu.$state] flash registered');
+      }
+    }
 
-      $log.debug('[bu.$state] screen registered: ' + spec.name);
-      $log.debug(spec);
+    function showFlash(title, text, options) {
+      console.assert(service.flash);
+      var DEFAULT_OPTIONS = {
+        closeable: false,
+        confirm  : true,
+      };
+      options = angular.extend(DEFAULT_OPTIONS, options);
+      _.defer(function(){
+        $rootScope.$apply(function() {
+          angular.extend(service.flash, options);
+          service.flash.message = {
+            title: title,
+            text : text,
+          };
+          service.flash.state = 'active';
+        });
+      });
+    }
+    function hideFlash() {
+      _.defer(function() {
+        $rootScope.$apply(function() {
+          service.flash.state   = 'inactive';
+        });
+      });
     }
     function activateScreen(name, direction) {
       var defer = $q.defer();
       var from  = getActiveScreen();
       var to    = getScreen(name);
 
-      /* sanity checks */
-      $log.debug(name)
       $console.assert(to);
       direction = angular.isDefined(direction)? direction : $settings.BU_SLIDE_DIRECTION;
 
@@ -72,7 +99,8 @@ angular.module('bu').factory('bu.$state',  [
       }
 
       if (angular.isDefined(from)) {
-        $log.debug('[bu.$state] screen change ' + from.name + ' => ' + to.name);
+        $log.debug('[bu.$state] screen change ' +
+          from.options.name + ' => ' + to.options.name);
 
         $q.all([
           from.getReadyDeactivate(direction),
@@ -83,18 +111,18 @@ angular.module('bu').factory('bu.$state',  [
             to.activate(direction),
           ]);
         }).then(function() {
-          to.setActive();
-          from.setInactive();
+          to.state = 'active';
+          from.state = 'inactive';
           defer.resolve();
         });
       } else {
         $log.debug('[bu.$state] initial screen setup');
 
         angular.forEach(service.screens, function(screen) {
-          if (screen.name === name) {
-            screen.setActive();
+          if (screen.options.name === name) {
+            screen.state = 'active';
           } else {
-            screen.setInactive();
+            screen.state = 'inactive';
           }
         });
         defer.resolve();
@@ -122,11 +150,15 @@ angular.module('bu').factory('bu.$state',  [
     service.isSmall         = isSmall;
     service.isMedium        = isMedium;
 
+    service.register        = register
+
     service.getScreen       = getScreen;
     service.getActiveScreen = getActiveScreen;
     service.activateScreen  = activateScreen;
-    service.registerScreen  = registerScreen;
 
+    // Flash //
+    service.showFlash     = showFlash;
+    service.hideFlash     = hideFlash;
     return service;
   }
 ]);

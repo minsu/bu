@@ -3,22 +3,27 @@
 //-------------------------------------------------------------------
 .bu.screens {
   position: absolute;
-  width   : 100%;
-  height  : 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .bu.screen {
   position: absolute;
-  width   : 100%;
-  top     : 0px;
-  bottom  : 0px;
+  height: 100%;
+  width: 100%;
+  background-color: white;
 
   &.inactive { display: none; }
   &.active   { display: block;}
   &.ready    { display: block;}
-}
 
-// DECORATION //
-.bu.screen {
+  color: #CCCCCC;
   background-color: white;
+
+  @each $color, $value in $colors {
+    &.#{$color} {
+      color: white !important;
+      background-color: color($color, 1, active);
+    }
+  }
 }

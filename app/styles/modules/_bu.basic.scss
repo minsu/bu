@@ -31,7 +31,8 @@ table {
   border-spacing: 0;
 }
 a {
-  outline    : 0; /* prevent dotted outline */
+  outline: 0; /* prevent dotted outline */
+  text-decoration: none;
 }
 img {
   /* remove unwanted margin below */

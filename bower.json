@@ -26,6 +26,7 @@
     "angular": "~1.2.14",
     "angular-animate": "~1.2.14",
     "angular-touch": "~1.2.14",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "hammerjs": "~1.0.9"
   }
 }

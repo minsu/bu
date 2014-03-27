@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
-#
 # pngcreate.py (python3 version)
 #
 # Exports Font Awesome icons as PNG images.
 #
 # Copyright (c) 2012-2013 Michal Wojciechowski (http://odyniec.net/)
-#
 # Font Awesome - http://fortawesome.github.com/Font-Awesome
-#
 
 import sys, argparse, os, re
 from os import path, access, R_OK
@@ -431,9 +428,6 @@ if __name__ == '__main__':
             help="The name(s) of the icon(s) to export (or \"ALL\" for all icons)")
     parser.add_argument("--color", type=str, default="black",
             help="Color (HTML color code or name, default: black)")
-    parser.add_argument("--filename", type=str,
-            help="The name of the output file (it must end with \".png\"). If " +
-            "all files are exported, it is used as a prefix.")
     parser.add_argument("--font", type=str,
         default="{0}/fonts/fontawesome-webfont.ttf".format(
             os.path.dirname(os.path.abspath(__file__))),
@@ -474,20 +468,11 @@ if __name__ == '__main__':
             if icon in icons:
                 selected_icons.append(icon)
             else:
-                print >> sys.stderr, "Error: Unknown icon name (%s)" % (icon)
+                print("Error: Unknown icon name (%s)" % icon, file=sys.stderr);
                 sys.exit(1)
 
     for icon in selected_icons:
-        if len(selected_icons) > 1:
-            # Exporting multiple icons -- treat the filename option as name prefix
-            filename = (args.filename or "") + icon + ".png"
-        else:
-            # Exporting one icon
-            if args.filename:
-                filename = args.filename
-            else:
-                filename = icon + ".png"
-
+        filename = icon + '-' + str(size) + '-' + color + ".png"
         print("Exporting icon \"%s\" as %s (%ix%i pixels)" %
                 (icon, filename, size, size))
 

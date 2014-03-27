@@ -4,12 +4,8 @@
 .bu.toolbar {
 
   display : block;
-  position: absolute;
   overflow: hidden;
   width   : 100%;
-
-  &.top    { top   : 0; }
-  &.bottom { bottom: 0; }
 
   @include responsive(small)  { padding: 6px; }
   @include responsive(medium) { padding: 8px; }
@@ -33,13 +29,14 @@
 
 // COLOR //
 .bu.toolbar {
-  &.light  {
-    background-color: white;
-    color: black(.8);
-  }
-  &.dark   {
-    background-color: black;
-    color: white(.8);
+  color: #CCCCCC;
+  background-color: white;
+
+  @each $color, $value in $colors {
+    &.#{$color} {
+      color: white !important;
+      background-color: color($color, 1, active);
+    }
   }
 }
 

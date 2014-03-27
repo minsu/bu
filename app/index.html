@@ -28,8 +28,7 @@
   <script src="static/scripts/vendor/TweenMax.min.js"></script>
 
   <script src="static/scripts/vendor/angular.min.js"></script>
-  <script src="static/scripts/vendor/angular-animate.min.js"></script>
-  <script src="static/scripts/vendor/angular-touch.min.js"></script>
+  <script src="static/scripts/vendor/hammer.min.js"></script>
   <!-- @endif -->
 
   <!-- @if BUILD_MODE == 'RELEASE' -->
@@ -41,33 +40,68 @@
 
 <body data-ng-controller="app.$controller" style="overflow:hidden">
 
-  <div class="bu screens ng-cloak"
-       ng-controller="bu.$controller" bu-screens>
+  <div class="bu screens" ng-cloak
+       ng-controller="bu.$controller"
+       bu-screens bu-flex="column">
 
-    <div class="bu bar top shadow"
+    <div bu-flex-element="fixed"
+         class="bu medium menu"
+         bu-flex="row"
+         bu-condense>
+      <div bu-flex-element="expand" class="item"
+           style="display:inline-block"></div>
+      <div bu-flex-element="fixed" class="active link item">
+        <a href="#">A</a>
+      </div>
+      <div bu-flex-element="fixed" class="item">B</div>
+      <div bu-flex-element="fixed" class="active link item">B</div>
+      <div bu-flex-element="fixed" class="item">
+        <div class="bu teal medium button">Gallery</div>
+      </div>
+    </div>
+    <div class="bu bar purple"
          style="z-index:{{ bu.ui.zindex.top + 1 }}"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-cell>
-        <div class="bu light round button"
-             ng-click="bu.activateScreen('content')">Content
+         bu-flex="row"
+         bu-flex-element="fixed"
+         bu-condense>
+      <div class="bu element" bu-flex-element="expand">
+        <div class="bu inverted outline round medium button"
+             bu-touch-tap="bu.activateScreen('content')">Content
         </div>
       </div>
-      <div class="bu element" bu-cell>
-        <div class="bu light round button"
-             ng-click="bu.activateScreen('home')">Home
+      <div class="bu element" bu-flex-element="expand">
+        <div class="bu inverted outline round medium button"
+             bu-touch-tap="bu.activateScreen('home')">Home
         </div>
       </div>
-      <div class="bu element" bu-cell>
-        <div class="bu light round button"
-             ng-click="bu.activateScreen('widgets')">Widgets
+      <div class="bu element" bu-flex-element="expand">
+        <div class="bu inverted outline round medium button"
+             bu-touch-tap="bu.activateScreen('widgets')">Widgets
         </div>
       </div>
     </div>
 
-    <!-- @include views/home.html -->
-    <!-- @include views/content.html -->
-    <!-- @include views/widgets.html -->
+    <!-- flash message -->
+    <div bu-flash>
+      <div bu-box="{confirm: true, closeable: true}"></div>
+    </div>
+
+    <div bu-flex-element="remaining">
+      <!-- @include views/home.html -->
+      <!-- @include views/content.html -->
+      <!-- @include views/widgets.html -->
+    </div>
+
+    <div bu-flex-element="fixed"
+         class="bu inverted orange medium menu" bu-condense>
+      <div class="active link item">A</div>
+      <div class="link item">B</div>
+      <div class="item">
+        <div class="bu teal medium button">Gallery</div>
+      </div>
+    </div>
   </div>
+
   <!-- templates -->
   <!-- @include views/templates.html -->
 
@@ -75,18 +109,21 @@
   <script src="static/scripts/app.js"></script>
   <script src="static/scripts/bu.js"></script>
 
+  <script src="static/scripts/modules/bu.touch.js"></script>
   <script src="static/scripts/modules/bu.state.js"></script>
   <script src="static/scripts/modules/bu.events.js"></script>
   <script src="static/scripts/modules/bu.service.js"></script>
   <script src="static/scripts/modules/bu.controller.js"></script>
   <script src="static/scripts/modules/bu.component.bu.js"></script>
   <script src="static/scripts/modules/bu.component.misc.js"></script>
+  <script src="static/scripts/modules/bu.component.message.js"></script>
   <script src="static/scripts/modules/bu.component.screen.js"></script>
   <script src="static/scripts/modules/bu.component.screens.js"></script>
   <script src="static/scripts/modules/bu.component.window.js"></script>
   <script src="static/scripts/modules/bu.component.panel.js"></script>
+  <script src="static/scripts/modules/bu.component.page.js"></script>
   <script src="static/scripts/modules/bu.component.condense.js"></script>
-  <script src="static/scripts/modules/bu.component.distribute.js"></script>
+  <script src="static/scripts/modules/bu.component.flex.js"></script>
   <!-- @endif -->
 
   <!-- @if BUILD_MODE == 'RELEASE'  -->

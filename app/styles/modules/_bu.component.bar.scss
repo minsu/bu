@@ -6,11 +6,7 @@
 .bu.bar {
 
   display : block;
-  position: absolute;
   width   : 100%;
-
-  &.top    { top   : 0; }
-  &.bottom { bottom: 0; }
 
   @include responsive(small)  { padding:  .5rem .5rem; }
   @include responsive(medium) { padding: .75rem  1rem; }
@@ -38,10 +34,21 @@
 
 // DECORATION //
 .bu.bar {
-  @include transition(all $simple-transition-duration ease);
+  &.top {
+    @include border-top-left-radius(inherit);
+    @include border-top-right-radius(inherit);
+  }
+  &.bottom {
+    @include border-bottom-left-radius(inherit);
+    @include border-bottom-right-radius(inherit);
+  }
+  @include transition(background-color .25s ease);
   background-color: transparent;
-  &.shadow {
-    background-color: rgba(0, 0, 0, .5);
+
+  @each $color, $value in $colors {
+    &.#{$color} {
+      background-color: color($color, 1);
+    }
   }
 }
 

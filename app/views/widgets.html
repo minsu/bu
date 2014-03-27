@@ -1,21 +1,29 @@
 <div bu-screen="{name: 'widgets', responsive: 'right'}">
   <!-- window -->
-  <div bu-window="{panelWidth: 280}"
-       bu-background="{
-        src     : '/static/images/space.jpg',
-        size    : 'cover',
-        position: 'center center',
-       }">
-    <div class="bu light toolbar bottom"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-condense>
-        <div class="bu gray medium coffee icon link"
-             ng-click="bu.screens['widgets'].togglePanel('left')"></div>
+  <div bu-window="{offset: 280}"
+       bu-flex="column">
+    <div bu-flex-element="remaining">
+      <div class="bu page"
+           bu-background="{
+            src     : '/static/images/space.jpg',
+            size    : 'cover',
+            position: 'center center',
+           }">
       </div>
-      <div class="bu element text" bu-cell>Widgets</div>
-      <div class="bu element" bu-condense>
+    </div>
+    <div class="bu black toolbar"
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"
-             ng-click="bu.screens['widgets'].togglePanel('right')"></div>
+             bu-touch-tap="bu.screens['widgets'].togglePanel('left')">
+        </div>
+      </div>
+      <div class="bu element text" bu-flex-element="expand">Widgets</div>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
+        <div class="bu gray medium coffee icon link"
+             bu-touch-tap="bu.screens['widgets'].togglePanel('right')">
+        </div>
       </div>
     </div>
   </div>
@@ -26,18 +34,22 @@
        bu-panel="{
          'width'   : 280,
          'position': 'right',
-       }">
+       }"
+       bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>
-    <div class="bu light toolbar bottom"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-condense>
+    <div bu-flex-element="remaining" style="position:relative">
+      <div class="bu page"></div>
+    </div>
+    <div class="bu black toolbar"
+         bu-flex-element="fixed" bu-flex="row" bu-condense>
+      <div class="bu element" bu-condense bu-flex-element="fixed">
         <div class="bu gray medium coffee icon link"></div>
       </div>
-      <div class="bu element text" bu-cell>
+      <div class="bu element text" bu-flex-element="expand">
         Right
       </div>
-      <div class="bu element" bu-condense>
+      <div class="bu element" bu-condense bu-flex-element="fixed">
         <div class="bu gray medium coffee icon link"></div>
       </div>
     </div>
@@ -47,19 +59,24 @@
        bu-panel="{
          'width'   : 280,
          'position': 'left',
-       }">
+       }"
+       bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>
-    <div class="bu light toolbar bottom"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-condense>
+    <div bu-flex-element="remaining">
+      <div class="bu page"></div>
+    </div>
+    <div class="bu black toolbar bottom"
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"></div>
       </div>
-      <div class="bu element text" bu-cell>
+      <div class="bu element text" bu-flex-element="expand">
         The Adventures of Sherlock Holmes
       </div>
-      <div class="bu element text">1/2</div>
-      <div class="bu element" bu-condense>
+      <div class="bu element text" bu-flex-element="fixed">1/2</div>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"></div>
       </div>
     </div>

@@ -1,15 +1,25 @@
 <div bu-screen="{name: 'content', responsive: 'left'}">
   <!-- window -->
-  <div bu-window="{panelWidth: 280}"
-       style="background-color:lightgray">
-    <div class="bu light toolbar bottom"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-condense>
-        <div class="bu gray medium coffee icon link"
-             ng-click="bu.screens['content'].togglePanel('left')"></div>
+  <div bu-window="{offset: 280}"
+       bu-flex="column">
+    <div bu-flex-element="remaining">
+      <div bu-background="{
+            src     : '/static/images/space.jpg',
+            size    : 'cover',
+            position: 'center center',
+           }" bu-page="{mode: 'pageveiw'}">
       </div>
-      <div class="bu element text" bu-cell>Content</div>
-      <div class="bu element" bu-condense>
+    </div>
+    <div class="bu light toolbar"
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
+        <div class="bu gray medium coffee icon link"
+             bu-touch-tap="bu.screens['content'].togglePanel('left')">
+        </div>
+      </div>
+      <div class="bu element text" bu-flex-element="expand">Content</div>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"></div>
       </div>
     </div>
@@ -17,19 +27,28 @@
 
   <!-- panel -->
   <div class="shadow scrollable"
-       style="background-color:lightgray"
        bu-panel="{
          'width'   : 280,
          'position': 'left',
-       }">
+       }"
+       bu-flex="column">
     <div class="screen-center bu grey large coffee icon"></div>
-    <div class="bu light toolbar bottom"
-         bu-distribute="row" bu-condense>
-      <div class="bu element" bu-condense>
+    <div bu-flex-element="remaining">
+      <div bu-background="{
+          src     : '/static/images/underwater.jpg',
+          size    : 'cover',
+          position: 'center center',
+        }" bu-page="{mode: 'scrollview'}">
+      </div>
+    </div>
+    <div class="bu light toolbar"
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"></div>
       </div>
-      <div class="bu element text" bu-cell>Left</div>
-      <div class="bu element" bu-condense>
+      <div class="bu element text" bu-flex-element="expand">Left</div>
+      <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"></div>
       </div>
     </div>

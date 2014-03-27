@@ -1,0 +1,21 @@
+//-------------------------------------------------------------------
+// bu component: page
+//-------------------------------------------------------------------
+.bu.page {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  color: #CCCCCC;
+  background-color: white;
+
+  @each $color, $value in $colors {
+    &.#{$color} {
+      color: white !important;
+      background-color: color($color, 1, active);
+    }
+  }
+
+  &.left   { display: none; &.ready { display: block; }}
+  &.middle { display: block;}
+  &.right  { display: none; &.ready { display: block; }}
+}
