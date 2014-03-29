@@ -8,12 +8,29 @@
 
 		var name = 'buTouch' + g[0].toUpperCase() + g.slice(1);
 
-		angular.module('bu').directive(name, function() {
-			return function(scope, element, attrs) {
-				Hammer(element[0]).on(g, function(e) {
-					scope.$eval(attrs[name]);
-				});
-			};
-		});
+		angular.module('bu').directive(name, ['$log', '$parse',
+			function($log, $parse) {
+				return function(scope, element, attrs) {
+					var options = scope.$eval(attrs.buTouchOptions);
+					scope = angular.extend(scope, {
+						element: element,
+						attrs  : attrs,
+					});
+
+					/* register event */
+					Hammer(element[0], options).on(g, function(e) {
+						return scope.$apply(function() {
+							var result = scope.$eval(attrs[name]);
+							if (result.callback) {
+								return result.callback(e, scope);
+							} else {
+								return result;
+							}
+						});
+					});
+				};
+			}
+		]);
+
 	});
 }());

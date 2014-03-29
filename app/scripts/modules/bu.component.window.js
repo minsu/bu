@@ -86,12 +86,31 @@ angular.module('bu').directive('buWindow', [
           console.assert(false);
         }
       }
+      function tap(e, scope) {
+        if (scope.state !== 'full') return;
+
+        var x = e.gesture.startEvent.touches[0].offsetX;
+        var y = e.gesture.startEvent.touches[0].offsetY;
+
+        angular.forEach(ctrl.panels, function(panel) {
+          if (panel.state === 'active') {
+            if (panel.options.position === 'left') {
+              return ctrl.closePanel('left');
+            } else if (panel.options.position === 'right') {
+              return ctrl.closePanel('right');
+            }
+          }
+        })
+      }
 
       scope.state      = undefined; // {'full', 'left', 'right', 'both'}
       scope.zindex     = function() { return $state.ui.zindex.top; }
       scope.slide      = slide;
       scope.unslide    = unslide;
       scope.reposition = reposition;
+
+      /* touch events */
+      scope.tap = tap;
 
       /* register */
       scope = angular.extend(scope, {

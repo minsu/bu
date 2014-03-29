@@ -1,3 +1,40 @@
+angular.module('bu').factory('bu.$keyboard', [
+  '$log', '$document',
+
+  function($log, $document, $actions){
+    var service = {};
+    var subscribers = [];
+
+    function register(spec) {
+      subscribers.push(spec);
+    }
+
+    function handler(e) {
+      $log.debug('[bu.keyboard] keyup: ' + e.keyCode);
+      var subscriber = _.find(subscribers, {state: 'active'});
+      if (!subscriber) return;
+
+      switch(e.keyCode) {
+        case 33: /* page up */
+        case 37: /* left arrow */
+        case 38: /* up arrow */
+          return subscriber.keyboard.left();
+
+        case 34: /* page down */
+        case 39: /* right arrow */
+        case 40: /* down arrow */
+          return subscriber.keyboard.right();
+      }
+    };
+    angular.element($document).bind("keyup", function(e) {
+      return handler(e);
+    });
+
+    service.register = register;
+    return service;
+  }
+]);
+
 //-------------------------------------------------------------------
 // service: bu.$state
 //-------------------------------------------------------------------

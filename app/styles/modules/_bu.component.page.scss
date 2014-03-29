@@ -15,7 +15,16 @@
     }
   }
 
-  &.left   { display: none; &.ready { display: block; }}
-  &.middle { display: block;}
-  &.right  { display: none; &.ready { display: block; }}
+  &.active   {
+    display: block;
+    z-index: 2;
+  }
+  &.ready {
+    display: block;
+    z-index: 1;
+  }
+  &.inactive {
+    display: none;
+    z-index: 0;
+  }
 }

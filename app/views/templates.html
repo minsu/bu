@@ -1,18 +1,19 @@
 <script type="text/ng-template" id="bu.component.screen.html">
 <div class="bu screen {{ state }}"
-     ng-style="{'z-index': zindex()}" ng-transclude>
+     ng-style="{'z-index': zindex()}"
+     ng-transclude>
 </div>
 </script>
 
 <script type="text/ng-template" id="bu.component.page.html">
-<div class="bu page {{ state }}"
-     ng-style="{'z-index': zindex()}" ng-transclude>
-</div>
+<div class="bu page {{ state }}" ng-transclude></div>
 </script>
 
 <script type="text/ng-template" id="bu.component.window.html">
 <div class="bu window"
-     ng-style="{'z-index': zindex()}" ng-transclude>
+     ng-style="{'z-index': zindex()}"
+     bu-touch-tap="{callback: tap}"
+     ng-transclude>
 </div>
 </script>
 

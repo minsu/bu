@@ -9,18 +9,99 @@ angular.module('bu').directive('buScreen', [
   function($log, $q, $timeout, $settings, $bu, $state, $e) {
 
     function controller($scope, $element) {
-      $scope.state  = undefined;
       $scope.window = undefined;
       $scope.panels = [];
 
-      function zindex() {
-        switch($scope.state) {
-        case 'active':
-          return $state.ui.zindex.top;
-        case 'ready':
-          return $state.ui.zindex.middle;
-        default:
-          return $state.ui.zindex.base;
+      function getPanel(position) {
+        for(var i = 0;i < $scope.panels.length;i ++) {
+          if ($scope.panels[i].options.position === position) {
+            return $scope.panels[i];
+          }
+        }
+        return undefined;
+      }
+
+      function openPanel(position, speed) {
+        var panel = getPanel(position);
+        var defer = $q.defer();
+        var speed = angular.isDefined(speed)? speed : $settings.BU_SLIDE_SPEED;
+
+        console.assert(panel);
+        panel.getReadyActivate()
+        .then(function() {
+          var bucket = [];
+          bucket.push($scope.window.slide(position, speed));
+          bucket.push(panel.activate(speed));
+          return $q.all(bucket);
+        })
+        .then(function() {
+          panel.setActive();
+          if ($scope.window.state !== 'both' &&
+              position === 'left' && getPanel('right')) {
+            getPanel('right').setInactive();
+          }
+          if ($scope.window.state !== 'both' &&
+              position === 'right' && getPanel('left')) {
+            getPanel('left').setInactive();
+          }
+          defer.resolve();
+        });
+        return defer.promise;
+      }
+      function closePanel(position, speed) {
+        var panel = getPanel(position);
+        var defer = $q.defer();
+        var speed = angular.isDefined(speed)? speed : $settings.BU_SLIDE_SPEED;
+
+        console.assert(panel);
+        if ($scope.window.state === 'both') {
+          $log.debug('[bu.screen] no need to close: ' + position);
+          return $q.when(true);
+        }
+
+        if ($scope.window.state === 'left' ||
+            $scope.window.state === 'right') {
+          if (position === 'left' && getPanel('right')) {
+            return openPanel('right', speed);
+          }
+          if (position === 'right' && getPanel('left')) {
+            return openPanel('left', speed);
+          }
+          $log.debug('[bu.screen] no need to close: ' + position);
+          return $q.when(true);
+        }
+
+        panel.getReadyDeactivate()
+        .then(function() {
+          var bucket = [];
+          bucket.push($scope.window.unslide(position, speed));
+          bucket.push(panel.deactivate(speed));
+          return $q.all(bucket);
+        })
+        .then(function() {
+          panel.setInactive();
+          if (position === 'left' &&
+              $scope.window.state === 'right') {
+            getPanel($scope.window.state).setActive();
+          }
+          if (position === 'right' &&
+              $scope.window.state === 'left') {
+            getPanel($scope.window.state).setActive();
+          }
+          defer.resolve();
+        });
+        return defer.promise;
+      }
+      function togglePanel(position) {
+        var panel = getPanel(position);
+        console.assert(panel);
+        if (panel.state === 'active') {
+          return closePanel(position);
+        } else if (panel.state === 'inactive') {
+          return openPanel(position);
+        } else {
+          console.assert(false);
+          $log.debug(panel.state);
         }
       }
       function register(spec) {
@@ -40,19 +121,24 @@ angular.module('bu').directive('buScreen', [
       }
 
       $scope.register = register;
-      $scope.zindex   = zindex;
+
+      $scope.openPanel   = openPanel;
+      $scope.closePanel  = closePanel;
+      $scope.togglePanel = togglePanel;
+
       return $scope;
     }
 
     function linker(scope, element, attrs, ctrl) {
-
-      function getPanel(position) {
-        for(var i = 0;i < scope.panels.length;i ++) {
-          if (scope.panels[i].options.position === position) {
-            return scope.panels[i];
-          }
+      function zindex() {
+        switch(scope.state) {
+        case 'active':
+          return $state.ui.zindex.top;
+        case 'ready':
+          return $state.ui.zindex.middle;
+        default:
+          return $state.ui.zindex.base;
         }
-        return undefined;
       }
 
       // API Implementation //
@@ -91,90 +177,6 @@ angular.module('bu').directive('buScreen', [
         }
       };
 
-      function openPanel(position, speed) {
-        var panel = getPanel(position);
-        var defer = $q.defer();
-        var speed = angular.isDefined(speed)? speed : $settings.BU_SLIDE_SPEED;
-
-        console.assert(panel);
-        panel.getReadyActivate()
-        .then(function() {
-          var bucket = [];
-          bucket.push(scope.window.slide(position, speed));
-          bucket.push(panel.activate(speed));
-          return $q.all(bucket);
-        })
-        .then(function() {
-          panel.setActive();
-          if (scope.window.state !== 'both' &&
-              position === 'left' && getPanel('right')) {
-            getPanel('right').setInactive();
-          }
-          if (scope.window.state !== 'both' &&
-              position === 'right' && getPanel('left')) {
-            getPanel('left').setInactive();
-          }
-          defer.resolve();
-        });
-        return defer.promise;
-      }
-      function closePanel(position, speed) {
-        var panel = getPanel(position);
-        var defer = $q.defer();
-        var speed = angular.isDefined(speed)? speed : $settings.BU_SLIDE_SPEED;
-
-        console.assert(panel);
-        if (scope.window.state === 'both') {
-          $log.debug('[bu.screen] no need to close: ' + position);
-          return $q.when(true);
-        }
-
-        /* responsive case */
-        if (scope.window.state !== 'full' ||
-            scope.window.state !== 'both') {
-          if (position === 'left' && getPanel('right')) {
-            return openPanel('right', speed);
-          }
-          if (position === 'right' && getPanel('left')) {
-            return openPanel('left', speed);
-          }
-          $log.debug('[bu.screen] no need to close: ' + position);
-          return $q.when(true);
-        }
-
-        panel.getReadyDeactivate()
-        .then(function() {
-          var bucket = [];
-          bucket.push(scope.window.unslide(position, speed));
-          bucket.push(panel.deactivate(speed));
-          return $q.all(bucket);
-        })
-        .then(function() {
-          panel.setInactive();
-          if (position === 'left' &&
-              scope.window.state === 'right') {
-            getPanel(scope.window.state).setActive();
-          }
-          if (position === 'right' &&
-              scope.window.state === 'left') {
-            getPanel(scope.window.state).setActive();
-          }
-          defer.resolve();
-        });
-        return defer.promise;
-      }
-      function togglePanel(position) {
-        var panel = getPanel(position);
-        console.assert(panel);
-        if (panel.state === 'active') {
-          return closePanel(position);
-        } else if (panel.state === 'inactive') {
-          return openPanel(position);
-        } else {
-          console.assert(false);
-          $log.debug(panel.state);
-        }
-      }
       function reposition() {
         if ($state.isLarge() &&
             angular.isDefined(scope.options.responsive)) {
@@ -182,33 +184,30 @@ angular.module('bu').directive('buScreen', [
           scope.window.state = scope.options.responsive;
           scope.window.reposition(scope.options.responsive);
           if (scope.options.responsive === 'both') {
-            openPanel('left',  0);
-            openPanel('right', 0);
+            scope.openPanel('left',  0);
+            scope.openPanel('right', 0);
           } else {
-            openPanel(scope.options.responsive, 0);
+            scope.openPanel(scope.options.responsive, 0);
           }
         } else {
 
           scope.window.state = 'full';
           scope.window.reposition();
           if (scope.options.responsive === 'both') {
-            closePanel('left', 0);
-            closePanel('right', 0);
+            scope.closePanel('left', 0);
+            scope.closePanel('right', 0);
           } else if (angular.isDefined(scope.options.responsive)) {
-            closePanel(scope.options.responsive, 0);
+            scope.closePanel(scope.options.responsive, 0);
           }
         }
       }
 
+      scope.state              = undefined;
+      scope.zindex             = zindex;
       scope.getReadyActivate   = getReadyActivate;
       scope.getReadyDeactivate = getReadyDeactivate;
-
-      scope.activate   = activate;
-      scope.deactivate = deactivate;
-
-      scope.openPanel   = openPanel;
-      scope.closePanel  = closePanel;
-      scope.togglePanel = togglePanel;
+      scope.activate           = activate;
+      scope.deactivate         = deactivate;
 
       /* register */
       scope = angular.extend(scope, {

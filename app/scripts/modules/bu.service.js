@@ -12,8 +12,9 @@ angular.module('bu')
 
     /* browser capabilities */
     var browser = {
-      transitions: Modernizr.csstransitions,
-      transforms : Modernizr.csstransforms,
+      transitions : Modernizr.csstransitions,
+      transforms  : Modernizr.csstransforms,
+      transforms3d: Modernizr.csstransforms3d,
     };
 
     // EVENT PUB-SUB //
@@ -46,33 +47,35 @@ angular.module('bu')
     // ANIMATION - X //
     function x(element, x, speed) {
       var defer = $q.defer();
+      var line;
 
-      $log.debug('[bu:x] x: ' + x + ' ,speed: ' + speed);
-
-      if (!angular.isDefined(speed)) speed = $settings.BU_SLIDE_SPEED;
+      speed = angular.isDefined(speed)? speed:$settings.BU_SLIDE_SPEED;
       if (!browser.transitions ||
           !browser.transforms  ||
           !$settings.BU_ANIMATION) {
-        /* no animation */
+
         element.css('left', x + 'px');
         defer.resolve();
       } else {
         /* animation */
-        if ($settings.BU_FORCE_3D) {
-          TweenMax.to(element, speed / 1000.0, {
-            x: x, y: 0, z: 0.01, /* force 3D */
-            onComplete: function() {
-              $log.debug('[bu:x] done');
-              defer.resolve();
-            }
-          });
+        if (browser.transforms3d) {
+          if ($settings.BU_FORCE_3D) {
+            TweenMax.to(element, speed / 1000.0, {
+              x: x, y: 0, z: 0.01, /* force 3D */
+              onComplete: defer.resolve,
+            });
+          } else {
+            TweenMax.to(element, speed / 1000.0, {
+              css: {
+                transform: "translate3d(" + x + "px, 0, 0)",
+              },
+              onComplete: defer.resolve,
+            });
+          }
         } else {
           TweenMax.to(element, speed / 1000.0, {
-            css: {transform: "translateX(" + x + "px)"},
-            onComplete: function() {
-              $log.debug('[bu:x] done');
-              defer.resolve();
-            }
+            css: { transform: "translateX(" + x + "px)" },
+            onComplete: defer.resolve,
           });
         }
       }

@@ -1,121 +1,114 @@
 //-------------------------------------------------------------------
 // bu: page (directive)
 //-------------------------------------------------------------------
-
-angular.module('bu').directive('buPages', [
-  '$log', '$q', '$timeout',
-  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events',
-
-  function($log, $q, $timeout, $settings, $bu, $state, $e) {
-    function controller($scope, $element) {
-      $scope.pages = [];
-      function register(spec) {
-        if ($scope.pages.length === 0) {
-          spec.state = 'middle';
-        } else if ($scope.pages.length === 1) {
-          spec.state = 'left';
-        } else if ($scope.pages.length === 2) {
-          spec.state = 'right';
-        } else {
-          console.assert(false);
-        }
-        $log.debug('[bu.pages] registering a page: ' + spec.state);
-        $scope.pages.push(spec);
-      }
-      $scope.register = register;
-      return $scope;
-    }
-    function linker(scope, element, attrs) {
-    }
-    return {
-      restrict   : 'A',
-      scope      : {},
-      controller : controller,
-      link       : linker,
-    };
-  }
-]);
-
 angular.module('bu').directive('buPage', [
-  '$log', '$q', '$timeout',
+  '$log', '$q',
   'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events',
 
-  function($log, $q, $timeout, $settings, $bu, $state, $e) {
+  function($log, $q, $settings, $bu, $state, $e) {
 
     function linker(scope, element, attrs, ctrl) {
+      function handleTouch(e) {
+        var offset;
+        if (scope.state !== 'active') return $log.debug('pass');
+        e.gesture.preventDefault(); // disable browser scrolling
 
-      function zindex() {
-        switch(scope.state) {
-        case 'middle':
-          return $state.ui.zindex.top;
-        case 'left' :
-        case 'right':
-          return $state.ui.zindex.middle;
-        default:
-          return $state.ui.zindex.base;
-        }
-      }
-      function getReadyDeactivate(direction) {
-        var bucket = [];
-        if (scope.window.mode === 'full') {
-          angular.forEach(scope.panels, function(panel) {
-            if (panel.state === 'active') {
-              bucket.push(closePanel(panel.position));
+        switch (e.type) {
+        case 'dragright' :
+        case 'dragleft'  :
+          offset = e.gesture.deltaX;
+
+          if (offset > 0) {
+            if (ctrl.isFirstPage()) {
+              return $bu.x(element, offset * 0.5, 0);
+            } else {
+              ctrl.getPage('left').state = 'ready';
+              ctrl.getPage('right').state = 'inactive';
+
+              return $q.all([
+                $bu.x(element, offset, 0),
+                $bu.x(ctrl.getPage('left').element,
+                  (-1) * 0.5 * element.width() + offset * 0.5, 0),
+              ]);
             }
-          });
-        }
-        return $q.all(bucket);
-      }
-      function getReadyActivate(direction) {
-        scope.state = 'ready';
-        if (direction == 'right') {
-          return $bu.x(element, (-1) * 0.25 * element.width(), 0);
-        } else if (direction == 'left') {
-          return $bu.x(element, 0.75 * element.width(), 0);
-        } else {
+          } else {
+            if (ctrl.isLastPage()) {
+              return $bu.x(element, offset * 0.5, 0);
+            } else {
+              ctrl.getPage('right').state = 'ready';
+              ctrl.getPage('left').state = 'inactive';
+
+              return $q.all([
+                $bu.x(element, offset, 0),
+                $bu.x(ctrl.getPage('right').element,
+                  0.5 * element.width() + offset * 0.5, 0),
+              ]);
+            }
+          }
+          break;
+
+        case 'release'   :
+          offset = e.gesture.deltaX;
+          if (Math.abs(offset) > element.width() * 0.25) {
+            if (e.gesture.direction === 'right') {
+              return ctrl.flip('left');
+            } else if (e.gesture.direction === 'left') {
+              return ctrl.flip('right');
+            } else { console.assert(false); }
+          } else {
+            var direction, to, speed;
+            var bucket = [];
+
+            if (offset > 0) {
+              direction = 'left';
+              to = (-1) * 0.5 * element.width();
+            } else {
+              direction = 'right';
+              to = element.width() * 0.5;
+            }
+            speed = Math.abs(offset) / element.width() * $settings.BU_SLIDE_SPEED;
+            bucket.push($bu.x(element, 0, speed));
+            bucket.push($bu.x(ctrl.getPage(direction).element, to, speed));
+            return $q.all(bucket);
+          }
+          break;
+
+        case 'swipeleft' :
+          e.gesture.stopDetect();
+          return ctrl.nextPage();
+          break;
+        case 'swiperight':
+          e.gesture.stopDetect();
+          return ctrl.prevPage();
+          break;
+        default:
           console.assert(false);
         }
       }
-      function activate() {
-        return $bu.x(element, 0);
+
+      scope.position = undefined;
+      scope.state    = undefined;
+
+      /* touch event */
+      if (ctrl) {
+        Hammer(element[0], {drag_lock_to_axis: true}).on(
+          "release dragleft dragright swipeleft swiperight",
+          handleTouch
+        );
       }
-      function deactivate(direction) {
-        if (direction == 'left') {
-          return $bu.x(element, -1 * element.width());
-        } else if (direction == 'right') {
-          return $bu.x(element, element.width());
-        } else {
-          console.assert(false);
-        }
-      };
-
-      function reposition() {}
-
-      scope.state              = undefined;
-      scope.zindex             = zindex;
-      scope.getReadyActivate   = getReadyActivate;
-      scope.getReadyDeactivate = getReadyDeactivate;
-      scope.activate           = activate;
-      scope.deactivate         = deactivate;
 
       /* register */
-      scope = angular.extend(scope, {
-        options: scope.$eval(attrs.buPage),
-        element: element,
-        attrs  : attrs,
-      });
-
-      /* optional controller */
       if (ctrl) {
         $log.debug('[bu.page] registering to pages')
+        scope = angular.extend(scope, {
+          options: scope.$eval(attrs.buPage),
+          element: element,
+          attrs  : attrs,
+        });
         ctrl.register(scope);
       } else {
         $log.debug('[bu.page] no parent pages controller')
       }
-
-      /* responsive */
-      reposition();
-      $bu.wait('bu.screen', 'BU_EVENT_RESIZE', reposition);
     }
 
     return {
