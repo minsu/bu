@@ -44,7 +44,7 @@
        ng-controller="bu.$controller"
        bu-screens bu-flex="column">
 
-    <div bu-flex-element="fixed"
+    <div bu-flex-element="fixed" ng-cloak
          class="bu medium menu"
          bu-flex="row"
          bu-condense>
@@ -66,17 +66,17 @@
          bu-condense>
       <div class="bu element" bu-flex-element="expand">
         <div class="bu inverted outline round medium button"
-             bu-touch-tap="bu.activateScreen('content')">Content
+             bu-touch-tap="$actions.activateScreen('content')">Content
         </div>
       </div>
       <div class="bu element" bu-flex-element="expand">
         <div class="bu inverted outline round medium button"
-             bu-touch-tap="bu.activateScreen('home')">Home
+             bu-touch-tap="$actions.activateScreen('home')">Home
         </div>
       </div>
       <div class="bu element" bu-flex-element="expand">
         <div class="bu inverted outline round medium button"
-             bu-touch-tap="bu.activateScreen('widgets')">Widgets
+             bu-touch-tap="$actions.activateScreen('widgets')">Widgets
         </div>
       </div>
     </div>
@@ -111,8 +111,10 @@
 
   <script src="static/scripts/modules/bu.touch.js"></script>
   <script src="static/scripts/modules/bu.state.js"></script>
+  <script src="static/scripts/modules/bu.actions.js"></script>
   <script src="static/scripts/modules/bu.events.js"></script>
   <script src="static/scripts/modules/bu.service.js"></script>
+  <script src="static/scripts/modules/bu.keyboard.js"></script>
   <script src="static/scripts/modules/bu.controller.js"></script>
   <script src="static/scripts/modules/bu.component.bu.js"></script>
   <script src="static/scripts/modules/bu.component.misc.js"></script>

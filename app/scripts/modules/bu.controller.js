@@ -9,21 +9,12 @@
 //-------------------------------------------------------------------
 angular.module('bu')
 .controller('bu.$controller', [
-	'$log', '$scope', 'bu.$state', 'bu.$settings',
+	'$log', '$scope', 'bu.$state', 'bu.$settings', 'bu.$actions',
 
-	function($log, $scope, $state, $settings) {
+	function($log, $scope, $state, $settings, $actions) {
 
-		$scope.bu = $state;
-
-		/* DEBUG */
-		if ($settings.BU_DEBUG) {
-			window.$bu    = $state;
-			window.$apply = function() {
-				_.defer(function(){ $scope.$apply();});
-			};
-		}
-
-		$log.debug('[bu.$controller] created');
+		$scope.$actions = $actions;
+		$log.debug('[bu.$controller] initialized');
 		return $scope;
 	}
 ]);

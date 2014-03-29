@@ -13,12 +13,9 @@ angular.module('bu').directive('buScreen', [
       $scope.panels = [];
 
       function getPanel(position) {
-        for(var i = 0;i < $scope.panels.length;i ++) {
-          if ($scope.panels[i].options.position === position) {
-            return $scope.panels[i];
-          }
-        }
-        return undefined;
+        $log.debug('position: ' + position)
+        $log.debug($scope.panels)
+        return _.find($scope.panels, {options:{position:position}});
       }
 
       function openPanel(position, speed) {
@@ -104,23 +101,23 @@ angular.module('bu').directive('buScreen', [
           $log.debug(panel.state);
         }
       }
-      function register(spec) {
-        if (angular.isDefined(spec.attrs.buWindow)) {
-          $scope.window = spec;
-
-          $log.debug('[bu.screen] window registered');
-          $log.debug(spec);
-        } else if (angular.isDefined(spec.attrs.buPanel)) {
-          $scope.panels.push(spec);
-
-          $log.debug('[bu.screen] panel registered');
-          $log.debug(spec);
-        } else {
-          $console.assert(false);
+      function registerWindow(spec) {
+        if (angular.isDefined($scope.window)) {
+          console.assert(false, 'only one window can be registered');
         }
+        $log.debug('[bu.screen] registering a window');
+        $scope.window = spec;
       }
-
-      $scope.register = register;
+      function registerPanel(spec) {
+        if (!angular.isDefined(spec.options) ||
+            !angular.isDefined(spec.options.position)) {
+          console.assert(false, "a panel must have position value");
+        }
+        $log.debug('[bu.screen] registering a panel: ' + spec.options.position);
+        $scope.panels.push(spec);
+      }
+      $scope.registerWindow = registerWindow;
+      $scope.registerPanel  = registerPanel;
 
       $scope.openPanel   = openPanel;
       $scope.closePanel  = closePanel;
@@ -130,6 +127,8 @@ angular.module('bu').directive('buScreen', [
     }
 
     function linker(scope, element, attrs, ctrl) {
+      var spec;
+
       function zindex() {
         switch(scope.state) {
         case 'active':
@@ -178,26 +177,28 @@ angular.module('bu').directive('buScreen', [
       };
 
       function reposition() {
-        if ($state.isLarge() &&
-            angular.isDefined(scope.options.responsive)) {
-
-          scope.window.state = scope.options.responsive;
-          scope.window.reposition(scope.options.responsive);
-          if (scope.options.responsive === 'both') {
+        var responsive = attrs.buScreen.responsive;
+        if (!angular.isDefined(responsive)) {
+          $log.debug('[bu.screen] no responsive reposition necessary');
+          return;
+        }
+        if ($state.isLarge()) {
+          scope.window.state = responsive;
+          scope.window.reposition(responsive);
+          if (responsive === 'both') {
             scope.openPanel('left',  0);
             scope.openPanel('right', 0);
           } else {
-            scope.openPanel(scope.options.responsive, 0);
+            scope.openPanel(responsive, 0);
           }
         } else {
-
           scope.window.state = 'full';
           scope.window.reposition();
-          if (scope.options.responsive === 'both') {
+          if (responsive === 'both') {
             scope.closePanel('left', 0);
             scope.closePanel('right', 0);
-          } else if (angular.isDefined(scope.options.responsive)) {
-            scope.closePanel(scope.options.responsive, 0);
+          } else {
+            scope.closePanel(responsive, 0);
           }
         }
       }
@@ -209,24 +210,29 @@ angular.module('bu').directive('buScreen', [
       scope.activate           = activate;
       scope.deactivate         = deactivate;
 
+      /* reposition */
+      reposition();
+      $bu.wait('bu.screen', 'BU_EVENT_UI:RESIZE', reposition);
+
       /* register */
-      scope = angular.extend(scope, {
+      spec = angular.extend(scope, {
         options: scope.$eval(attrs.buScreen),
         element: element,
         attrs  : attrs,
       });
-      $state.register(scope);
-
-
-      /* responsive */
-      reposition();
-      $bu.wait('bu.screen', 'BU_EVENT_RESIZE', reposition);
+      if (angular.isDefined(ctrl) &&
+          angular.isDefined(ctrl.registerScreen)) {
+        ctrl.registerScreen(spec);
+      } else {
+        $state.registerRoot(spec);
+      }
     }
 
     return {
       restrict   : 'A',
       scope      : {},
       templateUrl: 'bu.component.screen.html',
+      require    : '?^buScreens',
       replace    : true,
       transclude : true,
       controller : controller,

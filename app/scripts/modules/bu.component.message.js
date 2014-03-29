@@ -48,7 +48,7 @@ angular.module('bu').directive('buFlash', [
         element: element,
         attrs  : attrs,
       });
-      $state.register(scope);
+      // $state.register(scope);
     }
 
     return {

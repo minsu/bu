@@ -76,7 +76,7 @@ angular.module('bu').directive('buFlex', [
 		}
 		return {
 			restrict: 'A',
-			link: linker,
+			link    : linker,
 		};
 	}
 ]);

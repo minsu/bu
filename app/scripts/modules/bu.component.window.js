@@ -7,7 +7,25 @@ angular.module('bu').directive('buWindow', [
 
   function($log, $q, $settings, $bu, $state, $e) {
 
+    function controller($scope, $element) {
+
+      function registerPages(spec) {
+        $log.debug('[bu.window] registering a pages');
+        $scope.pages = spec;
+      }
+      function registerPage(spec) {
+        $log.debug('[bu.window] registering a page');
+        spec.state = 'active';
+        $scope.page = spec;
+      }
+      $scope.registerPages = registerPages;
+      $scope.registerPage  = registerPage;
+
+      return $scope;
+    }
+
     function linker(scope, element, attrs, ctrl) {
+      var spec;
 
       function reposition() {
         var fullwidth;
@@ -100,7 +118,7 @@ angular.module('bu').directive('buWindow', [
               return ctrl.closePanel('right');
             }
           }
-        })
+        });
       }
 
       scope.state      = undefined; // {'full', 'left', 'right', 'both'}
@@ -113,12 +131,12 @@ angular.module('bu').directive('buWindow', [
       scope.tap = tap;
 
       /* register */
-      scope = angular.extend(scope, {
+      spec = angular.extend(scope, {
         options: scope.$eval(attrs.buWindow),
         element: element,
         attrs  : attrs,
       });
-      ctrl.register(scope);
+      ctrl.registerWindow(spec);
     }
 
     return {
@@ -127,6 +145,7 @@ angular.module('bu').directive('buWindow', [
       templateUrl: 'bu.component.window.html',
       transclude : true,
       require    : '^buScreen',
+      controller : controller,
       link       : linker,
     };
   }

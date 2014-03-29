@@ -21,7 +21,7 @@
 					Hammer(element[0], options).on(g, function(e) {
 						return scope.$apply(function() {
 							var result = scope.$eval(attrs[name]);
-							if (result.callback) {
+							if (result && angular.isDefined(result.callback)) {
 								return result.callback(e, scope);
 							} else {
 								return result;

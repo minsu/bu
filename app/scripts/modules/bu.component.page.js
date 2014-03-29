@@ -8,11 +8,23 @@ angular.module('bu').directive('buPage', [
   function($log, $q, $settings, $bu, $state, $e) {
 
     function linker(scope, element, attrs, ctrl) {
+      var spec;
+
+      function handleTap(e) {
+        var x = e.gesture.startEvent.touches[0].offsetX;
+        if (x < 0.25 * element.width()) {
+          e.gesture.stopDetect();
+          return ctrl.prevPage();
+        } else if (x > 0.75 * element.width()) {
+          e.gesture.stopDetect();
+          return ctrl.nextPage();
+        }
+      }
       function handleTouch(e) {
         var offset;
         if (scope.state !== 'active') return $log.debug('pass');
-        e.gesture.preventDefault(); // disable browser scrolling
 
+        e.gesture.preventDefault(); // disable browser scrolling
         switch (e.type) {
         case 'dragright' :
         case 'dragleft'  :
@@ -51,10 +63,12 @@ angular.module('bu').directive('buPage', [
           offset = e.gesture.deltaX;
           if (Math.abs(offset) > element.width() * 0.25) {
             if (e.gesture.direction === 'right') {
-              return ctrl.flip('left');
+              return ctrl.activate('left');
             } else if (e.gesture.direction === 'left') {
-              return ctrl.flip('right');
-            } else { console.assert(false); }
+              return ctrl.activate('right');
+            } else {
+              console.assert(false);
+            }
           } else {
             var direction, to, speed;
             var bucket = [];
@@ -95,25 +109,26 @@ angular.module('bu').directive('buPage', [
           "release dragleft dragright swipeleft swiperight",
           handleTouch
         );
+        Hammer(element[0]).on("tap", handleTap);
       }
 
       /* register */
-      if (ctrl) {
-        $log.debug('[bu.page] registering to pages')
-        scope = angular.extend(scope, {
-          options: scope.$eval(attrs.buPage),
-          element: element,
-          attrs  : attrs,
-        });
-        ctrl.register(scope);
+      spec = angular.extend(scope, {
+        options: scope.$eval(attrs.buPage),
+        element: element,
+        attrs  : attrs,
+      });
+      if (angular.isDefined(ctrl) &&
+          angular.isDefined(ctrl.registerPage)) {
+        ctrl.registerPage(spec);
       } else {
-        $log.debug('[bu.page] no parent pages controller')
+        scope.registerPage(spec);
       }
     }
 
     return {
       restrict   : 'A',
-      scope      : {},
+      scope      : true, // scope.registerPage
       require    : '?^buPages',
       templateUrl: 'bu.component.page.html',
       replace    : true,

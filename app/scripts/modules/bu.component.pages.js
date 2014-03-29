@@ -7,26 +7,26 @@ angular.module('bu').directive('buPages', [
 
   function($log, $q, $settings, $bu, $state, $e, $keyboard) {
     function controller($scope, $element) {
-      $scope.pages = [];
+      var pages = [];
 
-      function register(spec) {
-        if ($scope.pages.length === 0) {
+      function registerPage(spec) {
+        if (pages.length === 0) {
           spec.position = 'middle';
           spec.state    = 'active';
-        } else if ($scope.pages.length === 1) {
+        } else if (pages.length === 1) {
           spec.position = 'left';
           spec.state    = 'inactive';
-        } else if ($scope.pages.length === 2) {
+        } else if (pages.length === 2) {
           spec.position = 'right';
           spec.state    = 'inactive';
         } else {
           console.assert(false);
         }
         $log.debug('[bu.pages] registering a page: ' + spec.state);
-        $scope.pages.push(spec);
+        pages.push(spec);
       }
 
-      function flip(position) {
+      function activate(position) {
         var bucket = [];
         bucket.push($bu.x(getPage('middle').element,
           position === 'left'?
@@ -38,12 +38,13 @@ angular.module('bu').directive('buPages', [
         return $q.all(bucket).then(function() {
           var opposite;
           var tempPage;
+
           if (position === 'left') {
             opposite = 'right';
           } else if (position === 'right') {
             opposite = 'left';
           }
-          var tempPage = getPage(opposite);
+          tempPage = getPage(opposite);
           getPage('middle').position = opposite;
           getPage(position).position = 'middle';
           tempPage.position = position;
@@ -59,45 +60,48 @@ angular.module('bu').directive('buPages', [
       }
       function prevPage() {
         return getReadyPage('left').then(function() {
-          return flip('left');
+          return activate('left');
         });
       }
       function nextPage() {
-        $scope.state = 'inactive';
         return getReadyPage('right').then(function() {
-          return flip('right');
+          return activate('right');
         });
       }
       function getReadyPage(pos) {
         var page = getPage(pos);
         var to;
 
+        console.assert(page);
         page.state = 'ready';
         if (page.position === 'left') {
           to = (-1) * 0.5 * page.element.width();
         } else if (page.position === 'right') {
           to = $element.width() - 0.5 * page.element.width();
+        } else {
+          console.assert(false);
         }
-        console.assert(page);
         return $bu.x(page.element, to, 0);
       }
       function getPage(pos) {
-        return _.find($scope.pages, {position: pos});
+        return _.find(pages, {position: pos});
       }
       function isFirstPage() { return false; }
       function isLastPage()  { return false; }
 
       $scope.state    = 'active';
-      $scope.register = register;
-      $scope.flip     = flip;
+      $scope.pages    = pages;
+      $scope.registerPage = registerPage;
+      $scope.activate = activate;
       $scope.prevPage = prevPage;
       $scope.nextPage = nextPage;
-      $scope.isFirstPage = isFirstPage;
-      $scope.isLastPage = isLastPage;
-      $scope.getReadyPage = getReadyPage;
-      $scope.getPage = getPage;
+      $scope.getPage  = getPage;
 
-      $keyboard.register(angular.extend($scope, {
+      $scope.isFirstPage  = isFirstPage;
+      $scope.isLastPage   = isLastPage;
+      $scope.getReadyPage = getReadyPage;
+
+      $keyboard.subscribe(angular.extend($scope, {
         keyboard: {
           left : prevPage,
           right: nextPage,
@@ -105,11 +109,19 @@ angular.module('bu').directive('buPages', [
       }));
       return $scope;
     }
-    function linker(scope, element, attrs) {
+    function linker(scope, element, attrs, ctrl) {
+      scope = angular.extend(scope, {
+        options: scope.$eval(attrs.buPages),
+        element: element,
+        attrs  : attrs,
+      });
+      ctrl.registerPages(scope);
     }
+
     return {
       restrict   : 'A',
-      scope      : {},
+      scope      : true,
+      require    : '^buWindow',
       controller : controller,
       link       : linker,
     };

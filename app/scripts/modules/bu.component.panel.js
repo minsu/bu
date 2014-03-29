@@ -7,6 +7,8 @@ angular.module('bu').directive('buPanel', [
   function($log, $q, $settings, $bu, $state) {
 
     function linker(scope, element, attrs, ctrl) {
+      var spec;
+
       function setActive() {
         scope.state = 'active';
       }
@@ -80,12 +82,12 @@ angular.module('bu').directive('buPanel', [
       scope.deactivate         = deactivate;
 
       /* register */
-      scope = angular.extend(scope, {
+      spec = angular.extend(scope, {
         options: scope.$eval(attrs.buPanel),
         element: element,
         attrs  : attrs,
       });
-      ctrl.register(scope);
+      ctrl.registerPanel(spec);
     }
 
     return {

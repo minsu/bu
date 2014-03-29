@@ -1,40 +1,3 @@
-angular.module('bu').factory('bu.$keyboard', [
-  '$log', '$document',
-
-  function($log, $document, $actions){
-    var service = {};
-    var subscribers = [];
-
-    function register(spec) {
-      subscribers.push(spec);
-    }
-
-    function handler(e) {
-      $log.debug('[bu.keyboard] keyup: ' + e.keyCode);
-      var subscriber = _.find(subscribers, {state: 'active'});
-      if (!subscriber) return;
-
-      switch(e.keyCode) {
-        case 33: /* page up */
-        case 37: /* left arrow */
-        case 38: /* up arrow */
-          return subscriber.keyboard.left();
-
-        case 34: /* page down */
-        case 39: /* right arrow */
-        case 40: /* down arrow */
-          return subscriber.keyboard.right();
-      }
-    };
-    angular.element($document).bind("keyup", function(e) {
-      return handler(e);
-    });
-
-    service.register = register;
-    return service;
-  }
-]);
-
 //-------------------------------------------------------------------
 // service: bu.$state
 //-------------------------------------------------------------------
@@ -58,6 +21,7 @@ angular.module('bu').factory('bu.$state',  [
         base  : 0,    /* base zindex  */
       },
     };
+    service.root = undefined;
 
     // API //
     function isLarge() {
@@ -69,31 +33,6 @@ angular.module('bu').factory('bu.$state',  [
     function isMedium() {
       return ((service.ui.width > $settings.BU_WIDTH_SMALL) &&
               (service.ui.width <= $settings.BU_WIDTH_MEDIUM));
-    }
-
-    function getScreen(name) {
-      return service.screens[name];
-    }
-    function getActiveScreen() {
-      var result = undefined;
-      angular.forEach(service.screens, function(value) {
-        if (value.state === 'active') result = value;
-      });
-      return result;
-    }
-    function register(spec) {
-      /* bu-screen */
-      if (angular.isDefined(spec.attrs.buScreen)) {
-        service.screens = service.screens || {};
-        service.screens[spec.options.name] = spec;
-        $log.debug('[bu.$state] screen registered: ' + spec.options.name);
-      }
-      /* bu-flash */
-      if (angular.isDefined(spec.attrs.buFlash)) {
-        console.assert(!angular.isDefined(service.flash));
-        service.flash = spec;
-        $log.debug('[bu.$state] flash registered');
-      }
     }
 
     function showFlash(title, text, options) {
@@ -121,81 +60,41 @@ angular.module('bu').factory('bu.$state',  [
         });
       });
     }
-    function activateScreen(name, direction) {
-      var defer = $q.defer();
-      var from  = getActiveScreen();
-      var to    = getScreen(name);
-
-      $console.assert(to);
-      direction = angular.isDefined(direction)? direction : $settings.BU_SLIDE_DIRECTION;
-
-      if (from === to) {
-        $log.debug('[bu.$state] skipping activation');
-        defer.resolve();
-        return defer.promise;
-      }
-
-      if (angular.isDefined(from)) {
-        $log.debug('[bu.$state] screen change ' +
-          from.options.name + ' => ' + to.options.name);
-
-        $q.all([
-          from.getReadyDeactivate(direction),
-          to.getReadyActivate(direction)
-        ]).then(function() {
-          return $q.all([
-            from.deactivate(direction),
-            to.activate(direction),
-          ]);
-        }).then(function() {
-          to.state = 'active';
-          from.state = 'inactive';
-          defer.resolve();
-        });
+    function registerRoot(spec) {
+      var element;
+      if (angular.isDefined(spec.attrs.buScreens)) {
+        element = 'screens';
+      } else if (angular.isDefined(spec.attrs.buScreen)) {
+        element = 'screen';
       } else {
-        $log.debug('[bu.$state] initial screen setup');
-
-        angular.forEach(service.screens, function(screen) {
-          if (screen.options.name === name) {
-            screen.state = 'active';
-          } else {
-            screen.state = 'inactive';
-          }
-        });
-        defer.resolve();
+        console.assert(false);
       }
-      return defer.promise;
+      $log.debug('[bu.$state] registering root: ' + element);
+      service.root = spec
     };
 
     // initial ui information //
     service.ui.width  = angular.element($window).width();
     service.ui.height = angular.element($window).height();
 
+    service.isLarge  = isLarge;
+    service.isSmall  = isSmall;
+    service.isMedium = isMedium;
+
+    service.registerRoot = registerRoot;
+
+    // Flash //
+    service.showFlash = showFlash;
+    service.hideFlash = hideFlash;
+
     // events //
     angular.element($window).bind('resize', _.throttle(function(e) {
       service.ui.width  = angular.element($window).width();
       service.ui.height = angular.element($window).height();
 
-      $bu.fire('bu.$state', 'BU_EVENT_RESIZE');
+      $bu.fire('bu.$state', 'BU_EVENT_UI:RESIZE');
     }, 1000, {leading: false, trailing: true}));
 
-    /* when notified, all directives got compiled & linked */
-    $bu.wait('bu.$state', 'BU_EVENT_DOMREADY', function() {
-    });
-
-    service.isLarge         = isLarge;
-    service.isSmall         = isSmall;
-    service.isMedium        = isMedium;
-
-    service.register        = register
-
-    service.getScreen       = getScreen;
-    service.getActiveScreen = getActiveScreen;
-    service.activateScreen  = activateScreen;
-
-    // Flash //
-    service.showFlash     = showFlash;
-    service.hideFlash     = hideFlash;
     return service;
   }
 ]);

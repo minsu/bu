@@ -3,6 +3,11 @@
 //-------------------------------------------------------------------
 angular.module('bu')
 .value('bu.$events', {
-	BU_EVENT_RESIZE  : 'bu.event.resize',
-	BU_EVENT_DOMREADY: 'bu.event.domready',
+
+	// UI //
+	'BU_EVENT_UI:RESIZE'  : 'bu.event.ui:resize',
+	'BU_EVENT_UI:READY'   : 'bu.event.ui:ready',
+
+	// SCREEN //
+	'BU_EVENT_SCREEN:ACTIVATE': 'bu.event.screen:activate',
 });
