@@ -4,38 +4,24 @@
 angular.module('bu')
 .factory('bu.$service', [
   '$log', '$rootScope', '$window', '$timeout', '$q',
-  'bu.$settings', 'bu.$events',
+  'bu.$settings', 'bu.$events', 'bu.$state',
 
-  function($log, $rootScope, $window, $timeout, $q, $settings, $e) {
+  function($log, $rootScope, $window, $timeout, $q, $settings, $e, $state) {
 
     var service = {}
+    var browser = $state.browser;
 
-    /* browser capabilities */
-    var browser = {
-      transitions : Modernizr.csstransitions,
-      transforms  : Modernizr.csstransforms,
-      transforms3d: Modernizr.csstransforms3d,
-    };
-
-    // EVENT PUB-SUB //
+    // EVENT send/receive //
     function fire(sender, ev, data) {
       $console.assert(angular.isString(ev));
-      $console.assert($e[ev]);
+      $console.assert($e[ev]); /* sanity check */
 
       $log.debug('[' + sender + '] >> ' + ev);
-      if (data) {
-        if (angular.isFunction(data)) {
-          $log.debug('event data: function object');
-        } else {
-          $log.debug(data);
-        }
-      }
       $rootScope.$emit($e[ev], data);
     }
     function wait(waiter, ev, callback) {
       $console.assert(angular.isString(ev));
-      $log.debug(ev)
-      $console.assert($e[ev]);
+      $console.assert($e[ev]); /* sanity check */
 
       $log.debug('[' + waiter + '] waits on ' + ev);
       $rootScope.$on($e[ev], function(e, data) {
@@ -49,16 +35,15 @@ angular.module('bu')
       var defer = $q.defer();
       var line;
 
-      speed = angular.isDefined(speed)? speed:$settings.BU_SLIDE_SPEED;
+      if (!angular.isDefined(speed)) speed = $settings.BU_SLIDE_SPEED;
       if (!browser.transitions ||
           !browser.transforms  ||
           !$settings.BU_ANIMATION) {
-
         element.css('left', x + 'px');
         defer.resolve();
       } else {
-        /* animation */
         if (browser.transforms3d) {
+          /* 3D acceleration */
           if ($settings.BU_FORCE_3D) {
             TweenMax.to(element, speed / 1000.0, {
               x: x, y: 0, z: 0.01, /* force 3D */
@@ -73,6 +58,7 @@ angular.module('bu')
             });
           }
         } else {
+          /* 2D acceleration */
           TweenMax.to(element, speed / 1000.0, {
             css: { transform: "translateX(" + x + "px)" },
             onComplete: defer.resolve,
@@ -89,12 +75,9 @@ angular.module('bu')
 
       image.src = src;
       image.onload = function() {
-        $log.debug('[bu:preload] loaded: ' + src);
-        defer.resolve({
-          width : image.width,
-          height: image.height,
-        });
-      }
+        $log.debug('[bu.$service:preload] ' + src + ' (width: ' + image.width + ', height: ' + image.height + ')');
+        defer.resolve({ width : image.width, height: image.height });
+      };
       return defer.promise;
     };
 
@@ -103,6 +86,14 @@ angular.module('bu')
     service.fire     = fire;
     service.x        = x;
     service.preload  = preload;
+
+    // events //
+    angular.element($window).bind('resize', _.throttle(function(e) {
+      $state.ui.width  = angular.element($window).width();
+      $state.ui.height = angular.element($window).height();
+
+      fire('bu.$service', 'BU_EVENT_UI:RESIZE');
+    }, 1000, {leading: false, trailing: true}));
 
     return service;
   }

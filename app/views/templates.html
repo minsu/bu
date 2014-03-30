@@ -1,28 +1,27 @@
 <script type="text/ng-template" id="bu.component.screen.html">
-<div class="bu screen {{ state }}"
-     ng-style="{'z-index': zindex()}"
-     ng-transclude>
+<div class="bu screen"
+     ng-show="state === 'active' || state === 'ready'"
+     ng-style="{'z-index': state === 'active' && 2}">
+
+     <div class="bu content" style="height:100%;width:100%" ng-transclude></div>
 </div>
 </script>
 
 <script type="text/ng-template" id="bu.component.page.html">
-<div class="bu page {{ state }}" ng-transclude></div>
+<div class="bu page"
+     ng-show="state === 'active' || state === 'ready'"
+     ng-style="{'z-index': state === 'active' && 2}">
+     <div class="bu content" style="height:100%;width:100%" ng-transclude></div>
+</div>
 </script>
 
 <script type="text/ng-template" id="bu.component.window.html">
-<div class="bu window"
-     ng-style="{'z-index': zindex()}"
-     bu-touch-tap="{callback: tap}"
-     ng-transclude>
-</div>
+<div class="bu window" style="z-index:1" ng-transclude></div>
 </script>
 
 <script type="text/ng-template" id="bu.component.panel.html">
 <div class="bu panel {{ state }} {{ options.position }}"
-     ng-style="{
-       'z-index': zindex(),
-       'width'  : options.width + 'px'
-     }" ng-transclude>
+     ng-style="{ 'width'  : options.width + 'px' }" ng-transclude>
 </div>
 </script>
 
@@ -31,25 +30,3 @@
      ng-style="{'z-index': zindex()}" ng-transclude>
 </div>
 </script>
-
-<script type="text/ng-template" id="bu.component.box.html">
-<div class="bu box" bu-distribute="column">
-	<div class="element">
-		<div class="bu xlarge circular gray exclamation icon"></div>
-	</div>
-	<div class="element title" bu-cell>{{ bu.flash.message.title }}</div>
-	<div class="element text"  bu-cell>{{ bu.flash.message.text }}</div>
-	<div class="element">
-		<div class="bu full dark link button"
-		     ng-click="bu.hideFlash()">확인</dvi>
-	</div>
-</div>
-</script>
-
-<script type="text/ng-template" id="bu.component.message.html">
-<div class="bu message">
-  <div class="element title">{{ message.title }}</div>
-  <div class="element text">{{ message.text }}</div>
-</div>
-</script>
-

@@ -13,14 +13,9 @@ angular.module('bu').directive('buWindow', [
         $log.debug('[bu.window] registering a pages');
         $scope.pages = spec;
       }
-      function registerPage(spec) {
-        $log.debug('[bu.window] registering a page');
-        spec.state = 'active';
-        $scope.page = spec;
-      }
-      $scope.registerPages = registerPages;
-      $scope.registerPage  = registerPage;
 
+      // API //
+      $scope.registerPages = registerPages;
       return $scope;
     }
 
@@ -104,7 +99,7 @@ angular.module('bu').directive('buWindow', [
           console.assert(false);
         }
       }
-      function tap(e, scope) {
+      function handleTap(e) {
         if (scope.state !== 'full') return;
 
         var x = e.gesture.startEvent.touches[0].offsetX;
@@ -122,13 +117,9 @@ angular.module('bu').directive('buWindow', [
       }
 
       scope.state      = undefined; // {'full', 'left', 'right', 'both'}
-      scope.zindex     = function() { return $state.ui.zindex.top; }
       scope.slide      = slide;
       scope.unslide    = unslide;
       scope.reposition = reposition;
-
-      /* touch events */
-      scope.tap = tap;
 
       /* register */
       spec = angular.extend(scope, {
@@ -137,6 +128,9 @@ angular.module('bu').directive('buWindow', [
         attrs  : attrs,
       });
       ctrl.registerWindow(spec);
+
+      /* touch events */
+      Hammer(element[0]).on("tap", handleTap);
     }
 
     return {

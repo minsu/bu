@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------
-// bu: bu (module)
+// module: bu
 //-------------------------------------------------------------------
 var module = angular.module('bu', [])
 
@@ -41,6 +41,7 @@ module.config(['$logProvider', 'bu.$settings',
 //-------------------------------------------------------------------
 module.run(['$log', 'bu.$settings', 'bu.$state',
   function($log, $settings, $state) {
-
-  if ($settings.BU_DEBUG) window.$bu = $state;
-}]);
+    $log.debug('[bu] start running ...');
+    if ($settings.BU_DEBUG) window.$bu = $state;
+  }
+]);
