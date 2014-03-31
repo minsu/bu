@@ -1,27 +1,28 @@
-<div bu-screen="{name: 'home', responsive: 'both'}">
+<div bu-screen="{name: 'home', panels:{large:'both'}}">
 
   <!-- window -->
-  <div bu-flex="column" bu-window="{offset: 280}">
-
-    <div bu-pages
-         bu-flex-element="remaining">
-      <div bu-background="{
-            src     : '/static/images/background.jpg',
-            size    : 'cover',
-            position: 'center center',
-           }" bu-page="{mode: 'pageview'}">
+  <div bu-window bu-flex="column">
+    <div bu-pages bu-flex-element="remaining">
+      <div bu-page="{mode: 'pageview'}"
+           bu-background="{
+             src     : '/static/images/background.jpg',
+             size    : 'cover',
+             position: 'center center',
+           }">
       </div>
-      <div bu-background="{
-            src     : '/static/images/space.jpg',
-            size    : 'cover',
-            position: 'center center',
-           }" bu-page="{mode: 'pageveiw'}">
+      <div bu-page="{mode: 'pageveiw'}"
+           bu-background="{
+             src     : '/static/images/space.jpg',
+             size    : 'cover',
+             position: 'center center',
+           }">
       </div>
-      <div bu-background="{
+      <div bu-page="{mode: 'scrollview'}"
+           bu-background="{
             src     : '/static/images/underwater.jpg',
             size    : 'cover',
             position: 'center center',
-           }" bu-page="{mode: 'scrollview'}">
+           }">
       </div>
     </div>
     <div bu-flex-element="fixed"
@@ -30,7 +31,7 @@
          bu-condense>
       <div bu-flex-element="fixed" class="bu element" bu-condense>
         <div class="bu white medium coffee icon link"
-             bu-touch-tap="bu.screens['home'].togglePanel('left')">
+             bu-touch-tap="actions.togglePanel('home', 'left')">
         </div>
       </div>
       <div bu-flex-element="expand" class="bu element text">
@@ -40,7 +41,7 @@
       <div bu-flex-element="expand" class="bu element text">&gt;</div>
       <div bu-flex-element="fixed" class="bu element" bu-condense>
         <div class="bu white medium coffee icon link"
-             bu-touch-tap="bu.screens['home'].togglePanel('right')">
+             bu-touch-tap="actions.togglePanel('home', 'right')">
         </div>
       </div>
     </div>

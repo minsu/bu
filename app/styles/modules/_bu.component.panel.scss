@@ -8,9 +8,8 @@
   top     : 0;
   left    : 0;
   bottom  : 0;
-  &.inactive { display: none; }
-  &.ready    { display: block;}
-  &.active   { display: block;}
+  &.inactive, &.disabled { display: none; }
+  &.ready, &.active, &.enabled { display: block;}
 }
 
 // DECORATION //

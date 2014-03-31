@@ -24,6 +24,7 @@ angular.module('bu').factory('bu.$state',  [
 
     /* structure */
     service.root = undefined;
+    service.screen = undefined; /* active screen */
 
     // API //
     function isLarge() {
@@ -36,23 +37,23 @@ angular.module('bu').factory('bu.$state',  [
       return ((service.ui.width > $settings.BU_WIDTH_SMALL) &&
               (service.ui.width <= $settings.BU_WIDTH_MEDIUM));
     }
-
+    function getSize() {
+      if (isLarge()) return 'large';
+      if (isMedium()) return 'medium';
+      if (isSmall()) return 'small';
+      console.assert(false);
+    }
     function registerRoot(spec) {
       var element;
-      if (angular.isDefined(spec.attrs.buScreens)) {
-        element = 'screens';
-      } else if (angular.isDefined(spec.attrs.buScreen)) {
-        element = 'screen';
-      } else {
-        console.assert(false);
-      }
-      $log.debug('[bu.$state] registering root: ' + element);
+      console.assert(angular.isDefined(spec.attrs.buScreens));
+      $log.debug('[bu.$state] registering root (screens)');
       service.root = spec
     }
 
     service.isLarge  = isLarge;
     service.isSmall  = isSmall;
     service.isMedium = isMedium;
+    service.getSize  = getSize;
 
     service.registerRoot = registerRoot;
 

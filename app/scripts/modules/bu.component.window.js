@@ -22,29 +22,6 @@ angular.module('bu').directive('buWindow', [
     function linker(scope, element, attrs, ctrl) {
       var spec;
 
-      function reposition() {
-        var fullwidth;
-
-        /* width */
-        fullwidth = scope.element.parent().width();
-        if (scope.state === 'full') {
-          scope.element.width(fullwidth);
-        } else if (scope.state === 'left' ||
-                   scope.state === 'right') {
-          scope.element.width(fullwidth - scope.options.offset);
-        } else if (scope.state === 'both') {
-          scope.element.width(fullwidth - 2 * scope.options.offset);
-        }
-
-        /* x */
-        if (scope.state === 'full') {
-          return $bu.x(scope.element, 0, 0);
-        } else if (scope.state === 'left' ||
-                   scope.state === 'both') {
-          return $bu.x(scope.element, scope.options.offset, 0);
-        }
-      }
-
       function slide(position, speed) {
         var speed = angular.isDefined(speed)? speed : $settings.BU_SLIDE_SPEED;
 
@@ -100,26 +77,29 @@ angular.module('bu').directive('buWindow', [
         }
       }
       function handleTap(e) {
-        if (scope.state !== 'full') return;
-
-        var x = e.gesture.startEvent.touches[0].offsetX;
-        var y = e.gesture.startEvent.touches[0].offsetY;
+        if (scope.state !== 'none') return;
 
         angular.forEach(ctrl.panels, function(panel) {
           if (panel.state === 'active') {
             if (panel.options.position === 'left') {
+              e.preventDefault();
               return ctrl.closePanel('left');
             } else if (panel.options.position === 'right') {
+              e.preventDefault();
               return ctrl.closePanel('right');
             }
           }
         });
       }
 
-      scope.state      = undefined; // {'full', 'left', 'right', 'both'}
+      // WINDOW STATE
+      // both  : left & right opened (permanent)
+      // left  : left  opened by default (one panel open all the time)
+      // right : right opened by default (one panel open all the time)
+      // none  : none  opened by default
+      scope.state = undefined; // {'full', 'left', 'right', 'both'}
       scope.slide      = slide;
       scope.unslide    = unslide;
-      scope.reposition = reposition;
 
       /* register */
       spec = angular.extend(scope, {
@@ -136,6 +116,7 @@ angular.module('bu').directive('buWindow', [
     return {
       restrict   : 'A',
       replace    : true,
+      scope      : true,
       templateUrl: 'bu.component.window.html',
       transclude : true,
       require    : '^buScreen',

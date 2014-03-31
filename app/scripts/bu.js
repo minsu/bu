@@ -41,7 +41,7 @@ module.config(['$logProvider', 'bu.$settings',
 //-------------------------------------------------------------------
 module.run(['$log', 'bu.$settings', 'bu.$state',
   function($log, $settings, $state) {
-    $log.debug('[bu] start running ...');
+    $log.debug('[bu] START');
     if ($settings.BU_DEBUG) window.$bu = $state;
   }
 ]);

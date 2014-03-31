@@ -17,28 +17,34 @@ angular.module('bu').factory('bu.$keyboard', [
     var service = {};
 
     function subscribe(spec) {
-      $log.debug('[bu.$keyboard] subscribing to keyboard');
+      $log.debug('[bu.$keyboard] subscribing');
       $log.debug(spec);
-      console.assert(angular.isDefined(spec.keyboard))
       subscribers.push(spec);
+    }
+    function unsubscribe(spec) {
+      var index = _.indexOf(subscribers, spec);
+
+      $log.debug('[bu.$keyboard] unsubscribing service');
+      if (index > -1) {
+        subscribers.splice(index, 1);
+      } else {
+        $log.debug('[bu.$keyboard] unsubscribing non-existing handler');
+      }
+
     }
     function broadcast(e) {
       $log.debug('[bu.$keyboard] keyup: ' + keys[e.keyCode]);
       angular.forEach(subscribers, function(subscriber) {
-        if (subscriber.state === 'active') {
-          return handler(subscriber, e);
-        }
+        return handler(subscriber, e);
       })
     }
     function handler(subscriber, e) {
-      console.assert(subscriber.keyboard)
-
       switch(e.keyCode) {
       case 33: case 37: case 38:
-        return subscriber.keyboard.left();
+        return subscriber.left();
 
       case 34: case 39: case 40:
-        return subscriber.keyboard.right();
+        return subscriber.right();
       }
     };
     angular.element($document).bind("keyup", function(e) {
@@ -46,6 +52,7 @@ angular.module('bu').factory('bu.$keyboard', [
     });
 
     service.subscribe = subscribe;
+    service.unsubscribe = unsubscribe;
     return service;
   }
 ]);

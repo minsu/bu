@@ -13,7 +13,7 @@ angular.module('bu')
 
 	function($log, $scope, $state, $settings, $actions) {
 
-		$scope.$actions = $actions;
+		$scope.actions = $actions;
 		$log.debug('[bu.$controller] initialized');
 		return $scope;
 	}

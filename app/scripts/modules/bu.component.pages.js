@@ -3,9 +3,9 @@
 //-------------------------------------------------------------------
 angular.module('bu').directive('buPages', [
   '$log', '$q',
-  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events', 'bu.$keyboard',
+  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events',
 
-  function($log, $q, $settings, $bu, $state, $e, $keyboard) {
+  function($log, $q, $settings, $bu, $state, $e) {
     function controller($scope, $element) {
       var pages = [];
 
@@ -101,19 +101,17 @@ angular.module('bu').directive('buPages', [
       $scope.isLastPage   = isLastPage;
       $scope.getReadyPage = getReadyPage;
 
-      $keyboard.subscribe(angular.extend($scope, {
-        keyboard: {
-          left : prevPage,
-          right: nextPage,
-        },
-      }));
       return $scope;
     }
     function linker(scope, element, attrs, ctrl) {
       scope = angular.extend(scope, {
-        options: scope.$eval(attrs.buPages),
-        element: element,
-        attrs  : attrs,
+        options : scope.$eval(attrs.buPages),
+        element : element,
+        attrs   : attrs,
+        keyboard: {
+          left : scope.prevPage,
+          right: scope.nextPage,
+        },
       });
       ctrl.registerPages(scope);
     }

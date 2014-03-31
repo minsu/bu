@@ -47,21 +47,38 @@ angular.module('bu')
           if ($settings.BU_FORCE_3D) {
             TweenMax.to(element, speed / 1000.0, {
               x: x, y: 0, z: 0.01, /* force 3D */
-              onComplete: defer.resolve,
+
+              // (NOTE)
+              // if z is set to 0.01, clickable element
+              // becomes unclickable so that it is necessary
+              // to restore the z value to 0 at the end.
+              onComplete: function() {
+                TweenMax.to(element, 0, {
+                  x: x, y: 0, z:0,
+                  onComplete: function() {
+                    defer.resolve();
+                  }
+                });
+              },
             });
           } else {
             TweenMax.to(element, speed / 1000.0, {
               css: {
                 transform: "translate3d(" + x + "px, 0, 0)",
               },
-              onComplete: defer.resolve,
+              onComplete: function() {
+                defer.resolve();
+              }
             });
           }
         } else {
           /* 2D acceleration */
           TweenMax.to(element, speed / 1000.0, {
             css: { transform: "translateX(" + x + "px)" },
-            onComplete: defer.resolve,
+            onComplete: function() {
+              if (x === 0) {element[0].style.transform = '';}
+              defer.resolve();
+            }
           });
         }
       }
@@ -92,7 +109,10 @@ angular.module('bu')
       $state.ui.width  = angular.element($window).width();
       $state.ui.height = angular.element($window).height();
 
-      fire('bu.$service', 'BU_EVENT_UI:RESIZE');
+      $rootScope.$apply(function() {
+        /* force dirty checks */
+        fire('bu.$service', 'BU_EVENT_UI:RESIZE');
+      });
     }, 1000, {leading: false, trailing: true}));
 
     return service;

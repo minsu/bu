@@ -72,8 +72,14 @@ angular.module('bu').directive('buPanel', [
         }
       }
 
+      // PANEL STATE
+      // enabled  : not toggleable & shown
+      // disabled : not toggleable & not shown
+      // active   : toggleable & shown
+      // inactive : toggleable & not show
+      scope.state = undefined;
+
       scope.zindex             = zindex;
-      scope.state              = 'inactive';
       scope.setActive          = setActive;
       scope.setInactive        = setInactive;
       scope.getReadyActivate   = getReadyActivate;

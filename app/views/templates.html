@@ -1,9 +1,8 @@
 <script type="text/ng-template" id="bu.component.screen.html">
 <div class="bu screen"
      ng-show="state === 'active' || state === 'ready'"
-     ng-style="{'z-index': state === 'active' && 2}">
-
-     <div class="bu content" style="height:100%;width:100%" ng-transclude></div>
+     ng-style="{'z-index': state === 'active' && 2}"
+     ng-transclude>
 </div>
 </script>
 

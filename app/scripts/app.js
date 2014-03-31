@@ -40,10 +40,10 @@ angular.module('app', ['bu'])
 	}
 ])
 
-.run(['bu.$state', 'bu.$service',
-	function($state, $bu) {
+.run(['bu.$state', 'bu.$actions', 'bu.$service',
+	function($state, $actions, $bu) {
 		$bu.wait('app', 'BU_EVENT_UI:READY', function() {
-			$bu.fire('bu.$state', 'BU_EVENT_SCREEN:ACTIVATE', 'home');
+			$actions.activateScreen('home');
 		});
 	}
 ])

@@ -1,7 +1,6 @@
-<div bu-screen="{name: 'content', responsive: 'left'}">
+<div bu-screen="{name: 'content', panels:{large: 'left'}}">
   <!-- window -->
-  <div bu-window="{offset: 280}"
-       bu-flex="column">
+  <div bu-window bu-flex="column">
     <div bu-pages
          bu-flex-element="remaining">
       <div bu-page="{mode: 'pageveiw'}"
@@ -17,7 +16,7 @@
          bu-flex="row" bu-condense>
       <div class="bu element" bu-flex-element="fixed" bu-condense>
         <div class="bu gray medium coffee icon link"
-             bu-touch-tap="bu.screens['content'].togglePanel('left')">
+             bu-touch-tap="actions.togglePanel('content', 'left')">
         </div>
       </div>
       <div class="bu element text" bu-flex-element="expand">Content</div>

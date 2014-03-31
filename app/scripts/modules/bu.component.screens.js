@@ -44,6 +44,7 @@ angular.module('bu').directive('buScreens', [
 	        $log.debug('[bu.screens] screen change: ' +
 	          from.options.name + ' => ' + to.options.name);
 
+	        to.setState('ready');
 	        $q.all([
 	          from.getReadyDeactivate(direction),
 	          to.getReadyActivate(direction)
@@ -53,8 +54,8 @@ angular.module('bu').directive('buScreens', [
 	            to.activate(direction),
 	          ]);
 	        }).then(function() {
-	          to.state = 'active';
-	          from.state = 'inactive';
+	          to.setState('active');
+	          from.setState('inactive');
 	          defer.resolve();
 	        });
 	      } else {
@@ -62,9 +63,9 @@ angular.module('bu').directive('buScreens', [
 
 	        angular.forEach(screens, function(screen) {
 	          if (screen.options.name === name) {
-	            screen.state = 'active';
+	          	screen.setState('active');
 	          } else {
-	            screen.state = 'inactive';
+	          	screen.setState('inactive');
 	          }
 	        });
 	        defer.resolve();
@@ -72,10 +73,10 @@ angular.module('bu').directive('buScreens', [
 	      return defer.promise;
 	    };
 
-	    $scope.screens   = screens;
-			$scope.registerScreen  = registerScreen;
-			$scope.getScreen = getScreen;
-			$scope.activate  = activate;
+			$scope.screens        = screens;
+			$scope.getScreen      = getScreen;
+			$scope.activate       = activate;
+			$scope.registerScreen = registerScreen;
 
 	    return $scope;
   	}
@@ -83,9 +84,6 @@ angular.module('bu').directive('buScreens', [
   	function linker(scope, element, attrs) {
   		var spec;
 
-  		$bu.wait('bu.screens', 'BU_EVENT_SCREEN:ACTIVATE', function(name) {
-  			return scope.activate(name);
-  		});
       $timeout(function() {
         $bu.fire('bu.screens', 'BU_EVENT_UI:READY');
       });
