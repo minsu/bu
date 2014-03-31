@@ -75,9 +75,9 @@ angular.module('bu').directive('buPages', [
         console.assert(page);
         page.state = 'ready';
         if (page.position === 'left') {
-          to = (-1) * 0.5 * page.element.width();
+          to = (-1) * 0.5 * $element.width();
         } else if (page.position === 'right') {
-          to = $element.width() - 0.5 * page.element.width();
+          to = $element.width() - 0.5 * $element.width();
         } else {
           console.assert(false);
         }

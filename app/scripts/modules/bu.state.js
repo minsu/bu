@@ -23,8 +23,14 @@ angular.module('bu').factory('bu.$state',  [
     };
 
     /* structure */
-    service.root = undefined;
+    service.root   = undefined;
     service.screen = undefined; /* active screen */
+
+    /* state */
+    service.state = {
+      keyboard: false, /* under keyboard processing */
+      ajax    : false, /* under ajax loading */
+    }
 
     // API //
     function isLarge() {

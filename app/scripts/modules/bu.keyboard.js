@@ -2,9 +2,9 @@
 // service: bu.$keyboard
 //-------------------------------------------------------------------
 angular.module('bu').factory('bu.$keyboard', [
-  '$log', '$document',
+  '$log', '$document', 'bu.$state',
 
-  function($log, $document){
+  function($log, $document, $state){
     var subscribers = [];
     var keys = {
       33: 'PAGE-UP',
@@ -39,12 +39,21 @@ angular.module('bu').factory('bu.$keyboard', [
       })
     }
     function handler(subscriber, e) {
+      if ($state.state.keyboard) {
+        $log.debug('[bu.$keyboard] currently under processing');
+        return;
+      }
+      $state.state.keyboard = true;
       switch(e.keyCode) {
       case 33: case 37: case 38:
-        return subscriber.left();
+        return subscriber.left().then(function() {
+          $state.state.keyboard = false;
+        })
 
       case 34: case 39: case 40:
-        return subscriber.right();
+        return subscriber.right().then(function() {
+          $state.state.keyboard = false;
+        });
       }
     };
     angular.element($document).bind("keyup", function(e) {
