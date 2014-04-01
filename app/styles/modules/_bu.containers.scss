@@ -1,0 +1,60 @@
+//-------------------------------------------------------------------
+// bu.containers
+// - screens, screen, window, panel, pages, page
+//-------------------------------------------------------------------
+
+@mixin container {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  color: #CCCCCC;
+  background-color: white;
+
+  // COLORS //
+  @each $color, $value in $colors {
+    &.#{$color} {
+      color: white !important;
+      background-color: color($color, 1, active);
+    }
+  }
+
+  // DECORATIONS //
+  .right.shadow {
+    @include box-shadow(inset -5px 0px 3px -3px black(.35));
+  }
+  .left.shadow {
+    @include box-shadow(inset 5px 0px 3px -3px black(.35));
+  }
+}
+
+// containers' containers
+//-------------------------------------------------------------------
+[bu-screens], [bu-pages], [bu-window] {
+  display : block;
+  position: relative;
+  @include container;
+}
+[bu-window] { z-index: 2; } /* needs to be higher than panels */
+
+// containers
+//-------------------------------------------------------------------
+[bu-screen], [bu-panel], [bu-page] {
+  position: absolute;
+  @include container;
+
+  // STATES (normal) //
+  &.active, &.ready { display: block; }
+  &.inactive { display: none; }
+
+  // STATES (extra) //
+  &.enabled  { display: block; } // permanently shown
+  &.disabled { display: none;  } // permanently not-shown
+}
+[bu-screen], [bu-page] {
+  &.active { z-index: 2; }
+  &.ready  { z-index: 1; }
+}
+[bu-panel] { z-index: 1; } /* needs to be lower than windows */

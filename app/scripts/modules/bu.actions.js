@@ -8,8 +8,12 @@ angular.module('bu').factory('bu.$actions', [
 
 		// USER ACTIONS //
 		function activateScreen(name) {
+			$state.state.screen = false;
 			return $state.root.activate(name).then(function() {
 				$state.screen = _.find($state.root.screens, {state: 'active'});
+				$bu.wait('bu.$actions', 'BU_EVENT_SCREEN:READY', function() {
+					$state.state.screen = true;
+				}, true);
 				return $q.when(true);
 			});
 		}

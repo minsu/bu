@@ -9,21 +9,19 @@ angular.module('bu').directive('buPanel', [
     function linker(scope, element, attrs, ctrl) {
       var spec;
 
-      function setActive() {
-        scope.state = 'active';
-      }
-      function setInactive() {
-        scope.state = 'inactive';
+      function setState(state) {
+        $log.debug('[bu.panel] panel state change: ' + scope.state + ' >> ' + state);
+        scope.state = state;
       }
       function getReadyActivate() {
         scope.state = 'ready';
-        switch (scope.options.position) {
+        switch (scope.position) {
         case 'left':
           return $bu.x(element,
-            (-1) * 0.5 * scope.options.width, 0);
+            (-1) * 0.5 * element.width(), 0);
         case 'right':
           return $bu.x(element,
-            $state.ui.width - 0.5 * scope.options.width, 0);
+            element.parent().width() - 0.5 * element.width(), 0);
         default:
           console.assert(false);
         }
@@ -35,12 +33,12 @@ angular.module('bu').directive('buPanel', [
         if (!angular.isDefined(speed)) {
           speed = $settings.BU_SLIDE_SPEED;
         }
-        switch(scope.options.position) {
+        switch(scope.position) {
         case 'left':
           return $bu.x(element, 0, speed);
         case 'right':
           return $bu.x(element,
-            $state.ui.width - scope.options.width, speed);
+            element.parent().width() - element.width(), speed);
         default:
           console.assert(false);
         }
@@ -49,24 +47,13 @@ angular.module('bu').directive('buPanel', [
         if (!angular.isDefined(speed)) {
           speed = $settings.BU_SLIDE_SPEED;
         }
-        switch(scope.options.position) {
+        switch(scope.position) {
         case 'left':
           return $bu.x(element,
-            (-1) * 0.5 * parseInt(scope.options.width), speed);
+            (-1) * 0.5 * element.width(), speed);
         case 'right':
           return $bu.x(element,
-            $state.ui.width - 0.5 * scope.options.width, speed);
-        default:
-          console.assert(false);
-        }
-      }
-      function zindex() {
-        switch(scope.state) {
-        case 'inactive':
-          return $state.ui.zindex.base;
-        case 'active':
-        case 'ready':
-          return $state.ui.zindex.bottom;
+            element.parent().width() - 0.5 * element.width(), speed);
         default:
           console.assert(false);
         }
@@ -77,11 +64,9 @@ angular.module('bu').directive('buPanel', [
       // disabled : not toggleable & not shown
       // active   : toggleable & shown
       // inactive : toggleable & not show
-      scope.state = undefined;
-
-      scope.zindex             = zindex;
-      scope.setActive          = setActive;
-      scope.setInactive        = setInactive;
+      scope.state     = undefined;
+      scope.position  = attrs.buPanel;
+      scope.setState  = setState;
       scope.getReadyActivate   = getReadyActivate;
       scope.getReadyDeactivate = getReadyDeactivate;
       scope.activate           = activate;
@@ -99,7 +84,7 @@ angular.module('bu').directive('buPanel', [
     return {
       restrict   : 'A',
       scope      : {},
-      templateUrl: 'bu.component.panel.html',
+      templateUrl: 'bu.container.html',
       replace    : true,
       transclude : true,
       require    : '^buScreen',

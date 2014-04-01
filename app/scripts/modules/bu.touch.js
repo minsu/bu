@@ -12,7 +12,7 @@
 			function($log, $parse) {
 				return function(scope, element, attrs) {
 					var options = scope.$eval(attrs.buTouchOptions);
-					scope = angular.extend(scope, {
+					var spec    = angular.extend(scope, {
 						element: element,
 						attrs  : attrs,
 					});
@@ -22,7 +22,7 @@
 						return scope.$apply(function() {
 							var result = scope.$eval(attrs[name]);
 							if (result && angular.isDefined(result.callback)) {
-								return result.callback(e, scope);
+								return result.callback(e, spec);
 							} else {
 								return result;
 							}

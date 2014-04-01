@@ -10,4 +10,5 @@ angular.module('bu')
 
 	// SCREEN //
 	'BU_EVENT_SCREEN:ACTIVATE': 'bu.event.screen:activate',
+	'BU_EVENT_SCREEN:READY'   : 'bu.event.screen:ready',
 });

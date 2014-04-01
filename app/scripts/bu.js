@@ -10,6 +10,7 @@ module.constant('bu.$settings', {
   BU_ANIMATION      : true, /* if false, css 'left' is used */
   BU_FORCE_3D       : true, /* if false, translateX() is used */
   BU_SLIDE_SPEED    :  400, /* unit: ms */
+  BU_SCAL_SPEED     :  400, /* unit: ms */
   BU_SLIDE_DIRECTION: 'right',
 
   /* responsive thresholds */

@@ -3,12 +3,8 @@
   <div bu-window bu-flex="column">
     <div bu-pages
          bu-flex-element="remaining">
-      <div class="bu page"
-           bu-background="{
-            src     : '/static/images/space.jpg',
-            size    : 'cover',
-            position: 'center center',
-           }">
+      <div bu-page
+           bu-background="/static/images/space.jpg">
       </div>
     </div>
     <div class="bu black toolbar"
@@ -31,10 +27,8 @@
   <!-- panel -->
   <div class="shadow scrollable"
        style="background-color:lightgray"
-       bu-panel="{
-         'width'   : 280,
-         'position': 'right',
-       }"
+       bu-panel="right"
+       bu-width="280"
        bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>
@@ -55,10 +49,8 @@
   </div>
   <div class="shadow scrollable"
        style="background-color:lightgray"
-       bu-panel="{
-         'width'   : 280,
-         'position': 'left',
-       }"
+       bu-panel="left"
+       bu-width="280"
        bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>

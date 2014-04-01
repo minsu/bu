@@ -1,28 +1,16 @@
 <div bu-screen="{name: 'home', panels:{large:'both'}}">
 
   <!-- window -->
-  <div bu-window bu-flex="column">
+  <div bu-window bu-flex="column" bu-flex-event="BU_EVENT_SCREEN:READY">
     <div bu-pages bu-flex-element="remaining">
-      <div bu-page="{mode: 'pageview'}"
-           bu-background="{
-             src     : '/static/images/background.jpg',
-             size    : 'cover',
-             position: 'center center',
-           }">
+      <div bu-page>
+        <div bu-picture="/static/images/background.jpg"></div>
       </div>
-      <div bu-page="{mode: 'pageveiw'}"
-           bu-background="{
-             src     : '/static/images/space.jpg',
-             size    : 'cover',
-             position: 'center center',
-           }">
+      <div bu-page
+           bu-background="/static/images/space.jpg">
       </div>
-      <div bu-page="{mode: 'scrollview'}"
-           bu-background="{
-            src     : '/static/images/underwater.jpg',
-            size    : 'cover',
-            position: 'center center',
-           }">
+      <div bu-page
+           bu-background="/static/images/underwater.jpg">
       </div>
     </div>
     <div bu-flex-element="fixed"
@@ -49,11 +37,9 @@
 
   <!-- panels -->
   <div bu-flex="column"
-       class="green scrollable"
-       bu-panel="{
-         'width'   : 280,
-         'position': 'left',
-       }">
+       class="green scrollable right shadow"
+       bu-width="280"
+       bu-panel="left">
 
     <div class="screen-center bu grey large coffee icon"></div>
     <div bu-flex-element="remaining"></div>
@@ -69,11 +55,9 @@
     </div>
   </div>
   <div bu-flex="column"
-       class="blue scrollable"
-       bu-panel="{
-         'width'   : 280,
-         'position': 'right',
-       }">
+       class="blue scrollable left shadow"
+       bu-width="280"
+       bu-panel="right">
 
     <div class="screen-center bu grey large coffee icon"></div>
     <div bu-flex-element="remaining"></div>

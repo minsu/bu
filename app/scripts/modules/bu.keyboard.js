@@ -18,7 +18,6 @@ angular.module('bu').factory('bu.$keyboard', [
 
     function subscribe(spec) {
       $log.debug('[bu.$keyboard] subscribing');
-      $log.debug(spec);
       subscribers.push(spec);
     }
     function unsubscribe(spec) {

@@ -59,11 +59,13 @@ angular.module('bu').directive('buPages', [
         });
       }
       function prevPage() {
+        if (pages.length !== 3) return $q.when(true);
         return getReadyPage('left').then(function() {
           return activate('left');
         });
       }
       function nextPage() {
+        if (pages.length !== 3) return $q.when(true);
         return getReadyPage('right').then(function() {
           return activate('right');
         });
@@ -86,10 +88,16 @@ angular.module('bu').directive('buPages', [
       function getPage(pos) {
         return _.find(pages, {position: pos});
       }
-      function isFirstPage() { return false; }
-      function isLastPage()  { return false; }
+      function isFirstPage() {
+        if (pages.length !== 3) return true;
+        return false;
+      }
+      function isLastPage()  {
+        if (pages.length !== 3) return true;
+        return false;
+      }
 
-      $scope.state    = 'active';
+      $scope.state    = 'enabled';
       $scope.pages    = pages;
       $scope.registerPage = registerPage;
       $scope.activate = activate;
@@ -104,21 +112,25 @@ angular.module('bu').directive('buPages', [
       return $scope;
     }
     function linker(scope, element, attrs, ctrl) {
-      scope = angular.extend(scope, {
+      spec = angular.extend(scope, {
         options : scope.$eval(attrs.buPages),
         element : element,
         attrs   : attrs,
-        keyboard: {
-          left : scope.prevPage,
-          right: scope.nextPage,
-        },
       });
-      ctrl.registerPages(scope);
+
+      if (scope.pages.length == 3) {
+        spec = angular.extend(spec, {
+          keyboard: {
+            left : scope.prevPage,
+            right: scope.nextPage,
+          }
+        })
+      }
+      ctrl.registerPages(spec);
     }
 
     return {
       restrict   : 'A',
-      scope      : true,
       require    : '^buWindow',
       controller : controller,
       link       : linker,

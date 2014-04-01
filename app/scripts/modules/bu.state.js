@@ -28,6 +28,8 @@ angular.module('bu').factory('bu.$state',  [
 
     /* state */
     service.state = {
+      panel   : false, /* true: closeable panel is active */
+      screen  : false, /* true: screen is ready */
       keyboard: false, /* under keyboard processing */
       ajax    : false, /* under ajax loading */
     }
@@ -40,7 +42,7 @@ angular.module('bu').factory('bu.$state',  [
       return (service.ui.width <= $settings.BU_WIDTH_SMALL);
     }
     function isMedium() {
-      return ((service.ui.width > $settings.BU_WIDTH_SMALL) &&
+      return ((service.ui.width >  $settings.BU_WIDTH_SMALL) &&
               (service.ui.width <= $settings.BU_WIDTH_MEDIUM));
     }
     function getSize() {

@@ -11,7 +11,15 @@ angular.module('bu').directive('buPage', [
       var spec;
 
       function handleTap(e) {
-        var x = e.gesture.startEvent.touches[0].offsetX;
+        var x = e.gesture.startEvent.touches[0].x;
+
+        $log.debug('[bu.page] tap');
+        $log.debug(e);
+        if ($state.state.panel) {
+          $log.debug('[bu.page] delegating tap event to outer');
+          return;
+        }
+
         if (x < 0.25 * element.width()) {
           e.gesture.stopDetect();
           return ctrl.prevPage();
@@ -62,39 +70,37 @@ angular.module('bu').directive('buPage', [
         case 'release'   :
           offset = e.gesture.deltaX;
           if (Math.abs(offset) > element.width() * 0.25) {
-            if (e.gesture.direction === 'right') {
+            if ((e.gesture.direction === 'right') &&
+                (!ctrl.isFirstPage())) {
               return ctrl.activate('left');
-            } else if (e.gesture.direction === 'left') {
+            } else if ((e.gesture.direction === 'left') &&
+                (!ctrl.isLastPage())) {
               return ctrl.activate('right');
-            } else {
-              console.assert(false);
             }
-          } else {
-            var direction, to, speed;
-            var bucket = [];
-
-            if (offset > 0) {
-              direction = 'left';
-              to = (-1) * 0.5 * element.width();
-            } else {
-              direction = 'right';
-              to = element.width() * 0.5;
-            }
-            speed = Math.abs(offset) / element.width() * $settings.BU_SLIDE_SPEED;
-            bucket.push($bu.x(element, 0, speed));
-            bucket.push($bu.x(ctrl.getPage(direction).element, to, speed));
-            return $q.all(bucket);
           }
-          break;
+          var direction, to, speed;
+          var bucket = [];
 
+          if (offset > 0) {
+            direction = 'left';
+            to = (-1) * 0.5 * element.width();
+          } else {
+            direction = 'right';
+            to = element.width() * 0.5;
+          }
+          speed = Math.abs(offset) / element.width() * $settings.BU_SLIDE_SPEED;
+          bucket.push($bu.x(element, 0, speed));
+          if (angular.isDefined(ctrl.getPage(direction))) {
+            page = ctrl.getPage(direction);
+            bucket.push($bu.x(page.element, to, speed));
+          }
+          return $q.all(bucket);
         case 'swipeleft' :
           e.gesture.stopDetect();
           return ctrl.nextPage();
-          break;
         case 'swiperight':
           e.gesture.stopDetect();
           return ctrl.prevPage();
-          break;
         default:
           console.assert(false);
         }
@@ -104,13 +110,11 @@ angular.module('bu').directive('buPage', [
       scope.state    = undefined;
 
       /* touch event */
-      if (ctrl) {
-        Hammer(element[0], {drag_lock_to_axis: true}).on(
-          "release dragleft dragright swipeleft swiperight",
-          handleTouch
-        );
-        Hammer(element[0]).on("tap", handleTap);
-      }
+      Hammer(element[0], {drag_lock_to_axis: true}).on(
+        "release dragleft dragright swipeleft swiperight",
+        handleTouch
+      );
+      Hammer(element[0]).on("tap", handleTap);
 
       /* register */
       spec = angular.extend(scope, {
@@ -118,18 +122,13 @@ angular.module('bu').directive('buPage', [
         element: element,
         attrs  : attrs,
       });
-      if (angular.isDefined(ctrl) &&
-          angular.isDefined(ctrl.registerPage)) {
-        ctrl.registerPage(spec);
-      } else {
-        scope.registerPage(spec);
-      }
+      ctrl.registerPage(spec);
     }
 
     return {
       restrict   : 'A',
-      scope      : true, // scope.registerPage
-      require    : '?^buPages',
+      scope      : {},
+      require    : '^buPages',
       templateUrl: 'bu.component.page.html',
       replace    : true,
       transclude : true,

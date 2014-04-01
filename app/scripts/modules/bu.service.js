@@ -19,15 +19,31 @@ angular.module('bu')
       $log.debug('[' + sender + '] >> ' + ev);
       $rootScope.$emit($e[ev], data);
     }
-    function wait(waiter, ev, callback) {
+    function wait(waiter, ev, callback, onetime) {
       $console.assert(angular.isString(ev));
       $console.assert($e[ev]); /* sanity check */
 
       $log.debug('[' + waiter + '] waits on ' + ev);
-      $rootScope.$on($e[ev], function(e, data) {
+      var unsubscribe = $rootScope.$on($e[ev], function(e, data) {
         $log.debug('[' + waiter + '] << ' + ev);
+        if (onetime) unsubscribe();
         callback(data);
       });
+    }
+
+    // ANIMATION - SCALE //
+    function scale(element, scale, speed) {
+      var defer = $q.defer();
+      if (!browser.transforms) {
+        defer.resolve();
+      }
+      TweenMax(element, speed / 1000.0, {
+        scaleX: scale, scaleY: scale,
+        onComplete: function() {
+          defer.resolve();
+        }
+      });
+      return defer.promise;
     }
 
     // ANIMATION - X //

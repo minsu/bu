@@ -3,12 +3,8 @@
   <div bu-window bu-flex="column">
     <div bu-pages
          bu-flex-element="remaining">
-      <div bu-page="{mode: 'pageveiw'}"
-           bu-background="{
-             src     : '/static/images/space.jpg',
-             size    : 'cover',
-             position: 'center center',
-           }">
+      <div bu-page
+           bu-background="/static/images/space.jpg">
       </div>
     </div>
     <div class="bu light toolbar"
@@ -28,18 +24,12 @@
 
   <!-- panel -->
   <div class="shadow scrollable"
-       bu-panel="{
-         'width'   : 280,
-         'position': 'left',
-       }"
+       bu-panel="left"
+       bu-width="280"
        bu-flex="column">
     <div class="screen-center bu grey large coffee icon"></div>
     <div bu-flex-element="remaining"
-         bu-background="{
-           src     : '/static/images/underwater.jpg',
-           size    : 'cover',
-           position: 'center center',
-         }">
+         bu-background="/static/images/underwater.jpg">
     </div>
     <div class="bu light toolbar"
          bu-flex-element="fixed"

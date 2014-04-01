@@ -14,12 +14,8 @@
 @import "modules/bu.commons";
 
 // components
+@import "modules/bu.containers";
 @import "modules/bu.component.flex";
-
-@import "modules/bu.component.window";
-@import "modules/bu.component.screen";
-@import "modules/bu.component.page";
-@import "modules/bu.component.panel";
 
 @import "modules/bu.component.menu";
 @import "modules/bu.component.bar";
@@ -59,56 +55,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -webkit-touch-callout : none;
 }
-
-// animation : slide (show/hide)
-//-------------------------------------------------------------------
-.bu.slide {
-
-  $animation-duration: .5s;
-  $slide-out-movement: 25%;
-
-  &.ng-enter   , &.ng-leave,      /* enter / leave */
-  &.ng-hide-add, &.ng-hide-remove /* show  / hide  */ {
-    display: block !important;
-    @include transition($animation-duration ease-in-out);
-  }
-
-
-  /* from left to right */
-  &.left {
-    &.ng-enter, &.ng-hide-remove {
-      z-index: 2;
-      @include transform(translateX(-100%));
-      &.ng-enter-active, &.ng-hide-remove-active {
-        @include transform(translateX(0));
-      }
-    }
-    &.ng-leave, &.ng-hide-add {
-      z-index: 1;
-      @include transform(translateX(0));
-      &.ng-leave-active, &.ng-hide-add-active {
-        @include transform(translateX($slide-out-movement));
-      }
-    }
-  }
-  /* from right to left */
-  &.right {
-    &.ng-enter, &.ng-hide-remove {
-      z-index: 2;
-      @include transform(translateX(100%));
-      &.ng-enter-active, &.ng-hide-remove-active {
-        @include transform(translateX(0));
-      }
-    }
-    &.ng-leave, &.ng-hide-add {
-      z-index: 1;
-      @include transform(translateX(0));
-      &.ng-leave-active, &.ng-hide-add-active {
-        @include transform(translateX(-1 * $slide-out-movement));
-      }
-    }
-  }
-}
+body { position: absolute; height: 100%; width: 100%; overflow:hidden;}
 
 // component : cover-picture
 //-------------------------------------------------------------------

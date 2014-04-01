@@ -7,6 +7,7 @@ angular.module('bu').directive('buScreen', [
   'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events', 'bu.$keyboard',
 
   function($log, $q, $timeout, $settings, $bu, $state, $e, $keyboard) {
+
     var DEFAULT_PANEL_CONFIG = {
       small : 'none',
       medium: 'none',
@@ -17,167 +18,6 @@ angular.module('bu').directive('buScreen', [
       $scope.window = undefined;
       $scope.panels = [];
 
-      function getPanel(position) {
-        return _.find($scope.panels, {options:{position:position}});
-      }
-      function getPanelWidth(position) {
-        var panel = getPanel(position);
-        if (angular.isDefined(panel)) {
-          return panel.options.width;
-        } else {
-          return 0;
-        }
-      }
-
-      function openPanel(position, speed) {
-        var offset;
-        var panel = getPanel(position);
-        var opposite = (position === 'left')? 'right' : 'left';
-        var other = getPanel(opposite);
-
-        // trivial cases //
-        console.assert(position === 'left' || position === 'right');
-        if (!angular.isDefined(panel)) {
-          $log.debug('[bu.screen] no panel found: ' + position);
-          return $q.when(true);
-        }
-        if (panel.state !== 'inactive') {
-          $log.debug('[bu.screen] no need to open: ' + position + '(' + panel.state + ')');
-          return $q.when(true);
-        }
-
-        // based on window.state //
-        switch ($scope.window.state) {
-        case 'both':
-          console.assert(false); /* handled above as a trivial case */
-
-        case 'left': case 'right':
-          console.assert(angular.isDefined(opposite));
-          console.assert(opposite.state === 'active');
-
-          return $q.all([
-            panel.getReadyActivate(),
-            other.getReadyDeactivate(),
-          ])
-          .then(function() {
-            if (position === 'left') {
-              offset = getPanelWidth('left');
-            } else if (position === 'right') {
-              offset = 0;
-            } else { console.assert(false); }
-
-            return $q.all([
-              $bu.x($scope.window.element, offset),
-              panel.activate(speed),
-              other.deactivate(speed),
-            ]);
-          })
-          .then(function() {
-            panel.state = 'active';
-            other.state = 'inactive';
-            return $q.when(true);
-          });
-        case 'none':
-          if (other && other.state === 'active') {
-            return closePanel(opposite, speed);
-          }
-          return panel.getReadyActivate()
-          .then(function() {
-            if (position === 'left') {
-              offset = getPanelWidth('left');
-            } else if (position === 'right') {
-              offset = (-1) * getPanelWidth('right');
-            }
-            return $q.all([
-              $bu.x($scope.window.element, offset),
-              panel.activate(speed),
-            ]);
-          })
-          .then(function() {
-            panel.state = 'active';
-            return $q.when(true);
-          });
-        default:
-          console.assert(false);
-        }
-      }
-
-      function closePanel(position, speed) {
-        var offset;
-        var panel = getPanel(position);
-        var opposite = (position === 'left')? 'right' : 'left';
-        var other = getPanel(opposite);
-
-        // trivial cases //
-        console.assert(position === 'left' || position === 'right');
-        if (!angular.isDefined(panel)) {
-          $log.debug('[bu.screen] no panel found: ' + position);
-          return $q.when(true);
-        }
-        if (panel.state !== 'active') {
-          $log.debug('[bu.screen] no need to close: ' + position + '(' + panel.state + ')');
-          return $q.when(true);
-        }
-
-        // based on window.state //
-        switch ($scope.window.state) {
-        case 'both':
-          console.assert(false); /* handled above as a trivial case */
-
-        case 'left': case 'right':
-          console.assert(angular.isDefined(opposite));
-          console.assert(opposite.state === 'inactive');
-
-          return $q.all([
-            panel.getReadyDeactivate(),
-            other.getReadyActivate(),
-          ])
-          .then(function() {
-            if (position === 'left') {
-              offset = 0;
-            } else if (position === 'right') {
-              offset = getPanelWidth('left');
-            }
-            return $q.all([
-              $bu.x($scope.window.element, offset),
-              panel.deactivate(speed),
-              other.activate(speed),
-            ]);
-          })
-          .then(function() {
-            other.state = 'active';
-            panel.state = 'inactive'
-            return $q.when(true);
-          });
-        case 'none':
-          return panel.getReadyDeactivate()
-          .then(function() {
-            return $q.all([
-              $bu.x($scope.window.element, 0),
-              panel.deactivate(speed),
-            ]);
-          })
-          .then(function() {
-            panel.state = 'inactive';
-            return $q.when(true);
-          });
-        default:
-          console.assert(false);
-        }
-      }
-
-      function togglePanel(position) {
-        var panel = getPanel(position);
-        console.assert(panel);
-        if (panel.state === 'active') {
-          return closePanel(position);
-        } else if (panel.state === 'inactive') {
-          return openPanel(position);
-        } else {
-          console.assert(false);
-          $log.debug(panel.state);
-        }
-      }
       function registerWindow(spec) {
         if (angular.isDefined($scope.window)) {
           console.assert(false, 'only one window can be registered');
@@ -186,22 +26,16 @@ angular.module('bu').directive('buScreen', [
         $scope.window = spec;
       }
       function registerPanel(spec) {
-        if (!angular.isDefined(spec.options) ||
-            !angular.isDefined(spec.options.position)) {
+        if (!angular.isDefined(spec.position)) {
           console.assert(false, "a panel must have position value");
         }
-        $log.debug('[bu.screen] registering a panel: ' + spec.options.position);
+        $log.debug('[bu.screen] registering a panel: ' + spec.position);
         $scope.panels.push(spec);
       }
 
       $scope.registerWindow = registerWindow;
       $scope.registerPanel  = registerPanel;
 
-      $scope.getPanel      = getPanel;
-      $scope.getPanelWidth = getPanelWidth;
-      $scope.openPanel     = openPanel;
-      $scope.closePanel    = closePanel;
-      $scope.togglePanel   = togglePanel;
 
       return $scope;
     }
@@ -209,29 +43,49 @@ angular.module('bu').directive('buScreen', [
     function linker(scope, element, attrs, ctrl) {
       var spec;
 
-      function zindex() {
-        switch(scope.state) {
-        case 'active':
-          return $state.ui.zindex.top;
-        case 'ready':
-          return $state.ui.zindex.middle;
-        default:
-          return $state.ui.zindex.base;
-        }
+      function getPanelConfig() {
+        return angular.extend(DEFAULT_PANEL_CONFIG,
+          scope.options.panels || {}
+        )[$state.getSize()];
       }
-
-      // API Implementation //
-
-      function getReadyDeactivate(direction) {
+      function closePanels() {
         var bucket = [];
-        if (scope.window.state === 'none') {
+        var config = getPanelConfig();
+
+        if (config === 'none') {
           angular.forEach(scope.panels, function(panel) {
             if (panel.state === 'active') {
-              bucket.push(scope.closePanel(panel.options.position));
+              bucket.push(closePanel(panel.position));
             }
           });
         }
         return $q.all(bucket);
+      }
+
+
+      //-------------------------------------------------------------
+      // Activation/Deactivation
+      //-------------------------------------------------------------
+      function setState(state) {
+        switch (state) {
+        case 'active':
+          /* event subscription */
+          if (angular.isDefined(scope.window.pages.keyboard)) {
+            $keyboard.subscribe(scope.window.pages.keyboard);
+          }
+          break;
+        case 'ready': break;
+        case 'inactive':
+          /* event unsubscription */
+          if (angular.isDefined(scope.window.pages.keyboard)) {
+            $keyboard.unsubscribe(scope.window.pages.keyboard);
+          }
+          break;
+        }
+        scope.state = state;
+      }
+      function getReadyDeactivate(direction) {
+        return closePanels();
       }
       function getReadyActivate(direction) {
         if (direction === 'right') {
@@ -256,57 +110,227 @@ angular.module('bu').directive('buScreen', [
           console.assert(false);
         }
       };
+      //-------------------------------------------------------------
 
+      //-------------------------------------------------------------
+      // Panel operations
+      //-------------------------------------------------------------
+      function getPanel(position) {
+        return _.find(scope.panels, {position: position});
+      }
+      function getPanelWidth(position) {
+        var panel = getPanel(position);
+        if (angular.isDefined(panel)) {
+          return panel.element.width();
+        } else {
+          $log.error('[bu.screen] no matching panel found: ' + position);
+          return 0;
+        }
+      }
+      function openPanel(position, speed) {
+        var offset;
+        var panel = getPanel(position);
+        var opposite = (position === 'left')? 'right' : 'left';
+        var other = getPanel(opposite);
+        var panelConfig = getPanelConfig();
+
+        // trivial cases //
+        console.assert(position === 'left' || position === 'right');
+        if (!angular.isDefined(panel)) {
+          $log.debug('[bu.screen] no panel found: ' + position);
+          return $q.when(true);
+        }
+        if (panel.state !== 'inactive') {
+          $log.debug('[bu.screen] no need to open: ' + position + '(' + panel.state + ')');
+          return $q.when(true);
+        }
+
+        // based on window.state //
+        switch (panelConfig) {
+        case 'both':
+          console.assert(false); /* handled above as a trivial case */
+
+        case 'left': case 'right':
+          console.assert(angular.isDefined(opposite));
+          console.assert(opposite.state === 'active');
+
+          return $q.all([
+            panel.getReadyActivate(),
+            other.getReadyDeactivate(),
+          ])
+          .then(function() {
+            if (position === 'left') {
+              offset = getPanelWidth('left');
+            } else if (position === 'right') {
+              offset = 0;
+            } else { console.assert(false); }
+
+            return $q.all([
+              $bu.x(scope.window.element, offset),
+              panel.activate(speed),
+              other.deactivate(speed),
+            ]);
+          })
+          .then(function() {
+            panel.setState('active');
+            other.setState('inactive');
+            return $q.when(true);
+          });
+        case 'none':
+          if (other && other.state === 'active') {
+            return closePanel(opposite, speed);
+          }
+          return panel.getReadyActivate()
+          .then(function() {
+            if (position === 'left') {
+              offset = getPanelWidth('left');
+            } else if (position === 'right') {
+              offset = (-1) * getPanelWidth('right');
+            }
+            return $q.all([
+              $bu.x(scope.window.element, offset),
+              panel.activate(speed),
+            ]);
+          })
+          .then(function() {
+            panel.setState('active');
+            $state.state.panel = true; /* closeable panel is active */
+            return $q.when(true);
+          });
+        default:
+          console.assert(false);
+        }
+      }
+      function closePanel(position, speed) {
+        var offset;
+        var panel = getPanel(position);
+        var opposite = (position === 'left')? 'right' : 'left';
+        var other = getPanel(opposite);
+        var panelConfig = getPanelConfig();
+
+        // trivial cases //
+        console.assert(position === 'left' || position === 'right');
+        if (!angular.isDefined(panel)) {
+          $log.debug('[bu.screen] no panel found: ' + position);
+          return $q.when(true);
+        }
+        if (panel.state !== 'active') {
+          $log.debug('[bu.screen] no need to close: ' + position + '(' + panel.state + ')');
+          return $q.when(true);
+        }
+
+        switch (panelConfig) {
+        case 'both':
+          console.assert(false); /* handled above as a trivial case */
+
+        case 'left': case 'right':
+          console.assert(angular.isDefined(opposite));
+          console.assert(opposite.state === 'inactive');
+
+          return $q.all([
+            panel.getReadyDeactivate(),
+            other.getReadyActivate(),
+          ])
+          .then(function() {
+            if (position === 'left') {
+              offset = 0;
+            } else if (position === 'right') {
+              offset = getPanelWidth('left');
+            }
+            return $q.all([
+              $bu.x(scope.window.element, offset),
+              panel.deactivate(speed),
+              other.activate(speed),
+            ]);
+          })
+          .then(function() {
+            other.setState('active');
+            panel.setState('inactive');
+            return $q.when(true);
+          });
+        case 'none':
+          return panel.getReadyDeactivate()
+          .then(function() {
+            return $q.all([
+              $bu.x(scope.window.element, 0),
+              panel.deactivate(speed),
+            ]);
+          })
+          .then(function() {
+            panel.setState('inactive');
+            $state.state.panel = false; /* no closeable panel */
+            return $q.when(true);
+          });
+        default:
+          console.assert(false);
+        }
+      }
+      function togglePanel(position) {
+        var panel = getPanel(position);
+        console.assert(panel);
+        if (panel.state === 'active') {
+          return closePanel(position);
+        } else if (panel.state === 'inactive') {
+          return openPanel(position);
+        } else {
+          console.assert(false);
+          $log.debug(panel.state);
+        }
+      }
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Positioning
+      //-------------------------------------------------------------
       function reposition() {
         var panelConfig = angular.extend(DEFAULT_PANEL_CONFIG,
           scope.options.panels || {}
         )[$state.getSize()];
 
         console.assert(angular.isString(panelConfig));
-        scope.window.state = panelConfig;
         switch (panelConfig) {
         case 'both':
           $log.debug(ctrl);
           console.assert(angular.isDefined(scope.getPanel('left')));
           console.assert(angular.isDefined(scope.getPanel('right')));
-          scope.getPanel('left').state  = 'enabled';
-          scope.getPanel('right').state = 'enabled';
+          getPanel('left').setState('enabled');
+          getPanel('right').setState('enabled');
 
           scope.window.element.width(element.parent().width() -
-            (scope.getPanelWidth('left') + scope.getPanelWidth('right')));
+            (getPanelWidth('left') + getPanelWidth('right')));
           return $q.all([
-            $bu.x(scope.getPanel('left').element, 0, 0),
-            $bu.x(scope.getPanel('right').element, element.parent().width() - scope.getPanelWidth('right'), 0),
-            $bu.x(scope.window.element, scope.getPanelWidth('left'), 0),
+            $bu.x(getPanel('left').element, 0, 0),
+            $bu.x(getPanel('right').element, element.parent().width() - getPanelWidth('right'), 0),
+            $bu.x(scope.window.element, getPanelWidth('left'), 0),
           ]);
         case 'left':
           console.assert(angular.isDefined(scope.getPanel('left')));
           if (angular.isDefined(scope.getPanel('right'))) {
-            scope.getPanel('left').state  = 'active';
-            scope.getPanel('right').state = 'inactive';
+            getPanel('left').setState('active');
+            getPanel('right').setState('inactive');
           } else {
-            scope.getPanel('left').state = 'enabled';
+            getPanel('left').setState('enabled');
           }
-          scope.window.element.width(element.parent().width() - scope.getPanelWidth('left'));
+          scope.window.element.width(element.parent().width() - getPanelWidth('left'));
           return $q.all([
-            $bu.x(scope.getPanel('left').element, 0, 0),
-            $bu.x(scope.window.element, scope.getPanelWidth('left'), 0),
+            $bu.x(getPanel('left').element, 0, 0),
+            $bu.x(scope.window.element, getPanelWidth('left'), 0),
             ]);
         case 'right':
-          if (angular.isDefined(scope.getPanel('left'))) {
-            scope.getPanel('right').state = 'active';
-            scope.getPanel('left').state  = 'inactive';
+          if (angular.isDefined(getPanel('left'))) {
+            getPanel('right').setState('active');
+            getPanel('left').setState('inactive');
           } else {
-            scope.getPanel('right').state = 'enabled';
+            getPanel('right').setState('enabled');
           }
-          scope.window.element.width(element.parent().width() - scope.getPanelWidth('right'));
+          scope.window.element.width(element.parent().width() - getPanelWidth('right'));
           return $q.all([
-            $bu.x(scope.getPanel('right').element, element.parent().width() - scope.getPanelWidth('right'), 0),
+            $bu.x(getPanel('right').element, element.parent().width() - getPanelWidth('right'), 0),
             $bu.x(scope.window.element, 0, 0),
           ]);
         case 'none':
           angular.forEach(scope.panels, function(panel) {
-            panel.state = 'inactive';
+            panel.setState('inactive');
           });
           scope.window.element.width(element.parent().width());
           return $bu.x(scope.window.element, 0, 0);
@@ -314,32 +338,54 @@ angular.module('bu').directive('buScreen', [
           console.assert(false);
         }
       }
-      function setState(state) {
-        // STATES {active, inactive, ready}
-        switch (state) {
-        case 'active':
-          /* event subscription */
-          if (angular.isDefined(scope.window.pages.keyboard)) {
-            $keyboard.subscribe(scope.window.pages.keyboard);
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Touch events
+      //-------------------------------------------------------------
+      function handleTap(e) {
+        var x = e.gesture.startEvent.touches[0].x;
+        var startX = 0, endX = 0;
+
+        $log.debug('[bu.screen] tap');
+        $log.debug(e);
+        if (getPanelConfig() !== 'none') return;
+
+        $log.debug('[bu.screen] checking');
+        angular.forEach(scope.panels, function(panel) {
+          if (panel.state === 'active') {
+            if (panel.position === 'left') {
+              startX = panel.element.width();
+            } else if (panel.position === 'right') {
+              endX = element.width() - panel.element.width();
+            } else {
+              console.assert(false);
+            }
           }
-          break;
-        case 'ready': break;
-        case 'inactive':
-          /* event unsubscription */
-          if (angular.isDefined(scope.window.pages.keyboard)) {
-            $keyboard.unsubscribe(scope.window.pages.keyboard);
-          }
-          break;
+        });
+        $log.debug('[bu.screen] startX: ' + startX);
+        $log.debug('[bu.screen] endX  : ' + endX);
+        $log.debug('[bu.screen] x     : ' + x);
+
+        console.assert(!(startX && endX));
+        if ((startX && (x > startX)) ||
+            (endX   && (x < endX))) {
+          return closePanels();
         }
-        scope.state = state;
       }
       scope.state              = undefined;
       scope.setState           = setState;
-      scope.zindex             = zindex;
+
       scope.getReadyActivate   = getReadyActivate;
       scope.getReadyDeactivate = getReadyDeactivate;
       scope.activate           = activate;
       scope.deactivate         = deactivate;
+
+      scope.getPanel      = getPanel;
+      scope.getPanelWidth = getPanelWidth;
+      scope.openPanel     = openPanel;
+      scope.closePanel    = closePanel;
+      scope.togglePanel   = togglePanel;
 
       /* register */
       spec = angular.extend(scope, {
@@ -352,12 +398,15 @@ angular.module('bu').directive('buScreen', [
       /* reposition */
       reposition();
       $bu.wait('bu.screen', 'BU_EVENT_UI:RESIZE', reposition);
+
+      /* touch events */
+      Hammer(element[0]).on("tap", handleTap);
     }
 
     return {
       restrict   : 'A',
       scope      : {},
-      templateUrl: 'bu.component.screen.html',
+      templateUrl: 'bu.container.html',
       require    : '^buScreens',
       replace    : true,
       transclude : true,

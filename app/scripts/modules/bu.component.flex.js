@@ -2,9 +2,9 @@
 // bu: flex (directive)
 //-------------------------------------------------------------------
 angular.module('bu').directive('buFlex', [
-	'$log', 'bu.$state', 'bu.$service',
+	'$log', '$timeout', 'bu.$state', 'bu.$service',
 
-	function($log, $state, $bu) {
+	function($log, $timeout, $state, $bu) {
 		function linker(scope, element, attrs) {
 
 			function reposition() {
@@ -68,8 +68,16 @@ angular.module('bu').directive('buFlex', [
 			if (attrs.buFlex === 'column') {
 				scope.$watch(function() {
 					return element[0].offsetHeight;
-				}, _.throttle(function(value) {
+				}, _.throttle(function(value, old) {
 					$log.debug('[bu.flex] repositioning(column)');
+					$log.debug('[bu.flex] old: ' + old + ', new: ' + value);
+					$log.debug(element);
+
+					if (value && angular.isDefined(attrs.buFlexEvent)) {
+						$timeout(function() {
+							$bu.fire('bu.flex', attrs.buFlexEvent);
+						});
+					}
 					value && reposition();
 				}, 1000));
 			}
