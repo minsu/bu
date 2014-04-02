@@ -84,8 +84,6 @@ angular.module('bu').directive('buScreens', [
   	function linker(scope, element, attrs) {
   		var spec;
 
-  		scope.state = 'enabled';
-
       $timeout(function() {
         $bu.fire('bu.screens', 'BU_EVENT_UI:READY');
       });

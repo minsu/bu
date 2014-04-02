@@ -10,7 +10,8 @@
 @import "modules/bu.mixins";
 @import "modules/bu.fonts";
 @import "modules/bu.icons";
-@import "modules/bu.basic";
+
+@import "modules/bu.basic";     /* style reset */
 @import "modules/bu.commons";
 
 // components
@@ -23,7 +24,6 @@
 @import "modules/bu.component.button";
 @import "modules/bu.component.message";
 
-// HTML STYLE (UI) //
 html {
   font-family   : $font-family-ui;
   font-weight   : 200;
@@ -55,7 +55,12 @@ html {
   -webkit-font-smoothing: antialiased;
   -webkit-touch-callout : none;
 }
-body { position: absolute; height: 100%; width: 100%; overflow:hidden;}
+body {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow:hidden;
+}
 
 // component : cover-picture
 //-------------------------------------------------------------------

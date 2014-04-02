@@ -97,7 +97,6 @@ angular.module('bu').directive('buPages', [
         return false;
       }
 
-      $scope.state    = 'enabled';
       $scope.pages    = pages;
       $scope.registerPage = registerPage;
       $scope.activate = activate;

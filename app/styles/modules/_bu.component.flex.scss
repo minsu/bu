@@ -2,7 +2,12 @@
 // component: bu.flex
 //-------------------------------------------------------------------
 
-[bu-flex="row"]    { width : 100%; }
-[bu-flex="column"] { height: 100%; }
+[bu-flex="row"]{
+  width : 100%;
 
+  & > [bu-flex-element] {
+    display: inline-block;
+  }
+}
+[bu-flex="column"] { height: 100%; }
 [bu-flex-element="remaining"] { position:relative; }

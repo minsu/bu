@@ -40,15 +40,18 @@
 
 <body data-ng-controller="app.$controller" style="overflow:hidden">
 
-  <div bu-screens bu-flex="column"
+  <div bu-screens ng-cloak
+       bu-flex="column"
        ng-controller="bu.$controller">
 
     <div bu-flex-element="fixed"
          class="bu medium menu"
          bu-flex="row"
          bu-condense>
-      <div bu-flex-element="expand" class="item"
-           style="display:inline-block"></div>
+      <div bu-flex-element="fixed" class="item">
+        <div class="bu medium outline button">BUK</div>
+      </div>
+      <div bu-flex-element="expand" class="item"></div>
       <div bu-flex-element="fixed" class="active link item">
         <a href="#">A</a>
       </div>

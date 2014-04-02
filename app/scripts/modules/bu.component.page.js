@@ -16,6 +16,7 @@ angular.module('bu').directive('buPage', [
         $log.debug('[bu.page] tap');
         $log.debug(e);
         if ($state.state.panel) {
+          /* not a page navigation */
           $log.debug('[bu.page] delegating tap event to outer');
           return;
         }
@@ -129,7 +130,7 @@ angular.module('bu').directive('buPage', [
       restrict   : 'A',
       scope      : {},
       require    : '^buPages',
-      templateUrl: 'bu.component.page.html',
+      templateUrl: 'bu.container.html',
       replace    : true,
       transclude : true,
       link       : linker,
