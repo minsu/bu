@@ -1,8 +1,8 @@
 <div bu-screen="{name: 'content', panels:{large: 'left'}}">
-  <!-- window -->
-  <div bu-window bu-flex="column">
-    <div bu-pages
-         bu-flex-element="remaining">
+  <div bu-pages
+       bu-flex="column"
+       bu-flex-event="BU_EVENT_SCREEN:READY">
+    <div bu-flex-element="remaining">
       <div bu-page
            bu-background="/static/images/space.jpg">
       </div>
@@ -23,7 +23,7 @@
   </div>
 
   <!-- panel -->
-  <div class="shadow scrollable"
+  <div class="right shadow scrollable"
        bu-panel="left"
        bu-width="280"
        bu-flex="column">

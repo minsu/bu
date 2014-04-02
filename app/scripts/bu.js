@@ -16,6 +16,13 @@ module.constant('bu.$settings', {
   /* responsive thresholds */
   BU_WIDTH_SMALL : 480,
   BU_WIDTH_MEDIUM: 1024,
+
+  /* responsive panel positions */
+  BU_PANEL_CONFIG: {
+    small : 'none', /* no permanently shown panel for small devices */
+    medium: 'none', /* no permanently shown panel for medium devices */
+    large : 'none', /* no permanently shown panel for large devices */
+  },
 });
 
 // config

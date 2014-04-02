@@ -1,8 +1,8 @@
 <div bu-screen="{name: 'home', panels:{large:'both'}}">
-
-  <!-- window -->
-  <div bu-window bu-flex="column" bu-flex-event="BU_EVENT_SCREEN:READY">
-    <div bu-pages bu-flex-element="remaining">
+  <div bu-pages
+       bu-flex="column"
+       bu-flex-event="BU_EVENT_SCREEN:READY">
+    <div bu-flex-element="remaining">
       <div bu-page>
         <div bu-picture="/static/images/background.jpg"></div>
       </div>
@@ -13,10 +13,9 @@
            bu-background="/static/images/underwater.jpg">
       </div>
     </div>
-    <div bu-flex-element="fixed"
-         bu-flex="row"
-         class="bu secondary toolbar"
-         bu-condense>
+    <div class="bu secondary toolbar"
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
       <div bu-flex-element="fixed" class="bu element" bu-condense>
         <div class="bu white medium coffee icon link"
              bu-touch-tap="actions.togglePanel('home', 'left')">

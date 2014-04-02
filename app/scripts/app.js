@@ -43,7 +43,7 @@ angular.module('app', ['bu'])
 .run(['bu.$state', 'bu.$actions', 'bu.$service',
 	function($state, $actions, $bu) {
 		$bu.wait('app', 'BU_EVENT_UI:READY', function() {
-			$actions.activateScreen('home');
+			$actions.activateScreen('widgets');
 		});
 	}
 ])

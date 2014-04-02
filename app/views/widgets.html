@@ -1,8 +1,8 @@
 <div bu-screen="{name: 'widgets', panels:{large: 'right'}}">
-  <!-- window -->
-  <div bu-window bu-flex="column">
-    <div bu-pages
-         bu-flex-element="remaining">
+  <div bu-pages
+       bu-flex="column"
+       bu-flex-event="BU_EVENT_SCREEN:READY">
+    <div bu-flex-element="remaining">
       <div bu-page
            bu-background="/static/images/space.jpg">
       </div>
@@ -25,17 +25,17 @@
   </div>
 
   <!-- panel -->
-  <div class="shadow scrollable"
+  <div class="left shadow scrollable"
        style="background-color:lightgray"
        bu-panel="right"
        bu-width="280"
        bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>
-    <div bu-flex-element="remaining" style="position:relative">
-    </div>
+    <div bu-flex-element="remaining"></div>
     <div class="bu black toolbar"
-         bu-flex-element="fixed" bu-flex="row" bu-condense>
+         bu-flex-element="fixed"
+         bu-flex="row" bu-condense>
       <div class="bu element" bu-condense bu-flex-element="fixed">
         <div class="bu gray medium coffee icon link"></div>
       </div>
@@ -47,16 +47,14 @@
       </div>
     </div>
   </div>
-  <div class="shadow scrollable"
+  <div class="right shadow scrollable"
        style="background-color:lightgray"
        bu-panel="left"
        bu-width="280"
        bu-flex="column">
 
     <div class="screen-center bu grey large coffee icon"></div>
-    <div bu-flex-element="remaining">
-      <div class="bu page"></div>
-    </div>
+    <div bu-flex-element="remaining"></div>
     <div class="bu black toolbar bottom"
          bu-flex-element="fixed"
          bu-flex="row" bu-condense>

@@ -175,7 +175,6 @@ module.exports = function(grunt) {
             'app/scripts/modules/bu.component.panel.js',
             'app/scripts/modules/bu.component.page.js',
             'app/scripts/modules/bu.component.pages.js',
-            'app/scripts/modules/bu.component.window.js',
             'app/scripts/modules/bu.component.condense.js',
             'app/scripts/modules/bu.component.flex.js',
           ],

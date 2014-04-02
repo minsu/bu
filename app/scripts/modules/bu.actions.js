@@ -20,7 +20,7 @@ angular.module('bu').factory('bu.$actions', [
 		function togglePanel(name, position) {
 			var screen = _.find($state.root.screens, {options: {name: name}});
 			console.assert(screen);
-			$log.debug('[bu.$actions] togglePane(' + name + ')');
+			$log.debug('[bu.$actions] togglePanel(' + name + ')');
 			return screen.togglePanel(position);
 		}
 

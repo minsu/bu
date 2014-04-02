@@ -16,15 +16,8 @@ angular.module('bu').factory('bu.$state',  [
       columns     : Modernizr.csscolumns     || false,
     };
 
-    /* UI */
-    service.ui = {
-      width : angular.element($window).width(),
-      height: angular.element($window).height(),
-    };
-
     /* structure */
-    service.root   = undefined;
-    service.screen = undefined; /* active screen */
+    service.root = undefined;
 
     /* state */
     service.state = {
@@ -36,19 +29,20 @@ angular.module('bu').factory('bu.$state',  [
 
     // API //
     function isLarge() {
-      return (service.ui.width > $settings.BU_WIDTH_MEDIUM);
+      return (angular.element($window).width() > $settings.BU_WIDTH_MEDIUM);
     }
     function isSmall() {
-      return (service.ui.width <= $settings.BU_WIDTH_SMALL);
+      return (angular.element($window).width() <= $settings.BU_WIDTH_SMALL);
     }
     function isMedium() {
-      return ((service.ui.width >  $settings.BU_WIDTH_SMALL) &&
-              (service.ui.width <= $settings.BU_WIDTH_MEDIUM));
+      var width = angular.element($window).width();
+      return ((width >  $settings.BU_WIDTH_SMALL) &&
+              (width <= $settings.BU_WIDTH_MEDIUM));
     }
     function getSize() {
-      if (isLarge()) return 'large';
+      if (isLarge())  return 'large';
       if (isMedium()) return 'medium';
-      if (isSmall()) return 'small';
+      if (isSmall())  return 'small';
       console.assert(false);
     }
     function registerRoot(spec) {

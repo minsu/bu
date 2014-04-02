@@ -123,17 +123,11 @@ angular.module('bu').directive('buPicture', [
 
       $bu.preload(attrs.buPicture)
       .then(function(dimension) {
-
-        if (!$state.state.screen) {
-          // (NOTE)
-          // to position the image correctly. the container must be
-          // in place to calculate dimensions.
-          $bu.wait('bu.picture', 'BU_EVENT_SCREEN:READY', function() {
-            reposition(dimension);
-          }, true);
-        } else {
-          reposition(dimension);
-        }
+        scope.$watch(function() {
+          return element.width();
+        }, function(value) {
+          value && reposition(dimension);
+        })
       });
 
       /* touch pinch zoom */

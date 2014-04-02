@@ -23,6 +23,7 @@ angular.module('bu').directive('buScreens', [
 	    	}
         $log.debug('[bu.screens] registering a screen: ' + spec.options.name);
         screens.push(spec);
+        $log.debug('[bu.screens] total screens: ' + screens.length);
 	    }
 
 	    function activate(name) {
@@ -90,7 +91,6 @@ angular.module('bu').directive('buScreens', [
 
       /* register as root element */
       spec = angular.extend(scope, {
-      	options: scope.$eval(attrs.buScreens),
         element: element,
         attrs  : attrs,
       });
@@ -98,9 +98,9 @@ angular.module('bu').directive('buScreens', [
   	}
 
   	return {
-			restrict   : 'A',
-			controller : controller,
-			link       : linker,
+			restrict  : 'A',
+			link      : linker,
+			controller: controller,
   	};
   }
 ]);

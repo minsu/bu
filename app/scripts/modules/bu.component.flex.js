@@ -55,31 +55,30 @@ angular.module('bu').directive('buFlex', [
 				});
 			}
 
+			function resizeHandler(value, old) {
+				$log.debug('[bu.flex] repositioning');
+				$log.debug('[bu.flex] old: ' + old + ', new: ' + value);
+				$log.debug(element);
+
+				if (value && angular.isDefined(attrs.buFlexEvent)) {
+					$timeout(function() {
+						$bu.fire('bu.flex', attrs.buFlexEvent);
+					});
+				}
+				value && reposition();
+			}
+
 			// (NOTE)
 			// width change may require column reposition due to
 			// resized elements taking up different height
-			scope.$watch(function() {
-				return element[0].offsetWidth;
-			}, _.throttle(function(value) {
-				$log.debug('[bu.flex] repositioning(' + attrs.buFlex + ')');
-				value && reposition();
-			}, 1000));
-
-			if (attrs.buFlex === 'column') {
+			if (attrs.buFlex === 'row') {
+				scope.$watch(function() {
+					return element[0].offsetWidth;
+				}, _.throttle(resizeHandler, 1000));
+			} else if (attrs.buFlex === 'column') {
 				scope.$watch(function() {
 					return element[0].offsetHeight;
-				}, _.throttle(function(value, old) {
-					$log.debug('[bu.flex] repositioning(column)');
-					$log.debug('[bu.flex] old: ' + old + ', new: ' + value);
-					$log.debug(element);
-
-					if (value && angular.isDefined(attrs.buFlexEvent)) {
-						$timeout(function() {
-							$bu.fire('bu.flex', attrs.buFlexEvent);
-						});
-					}
-					value && reposition();
-				}, 1000));
+				}, _.throttle(resizeHandler, 1000));
 			}
 		}
 		return {

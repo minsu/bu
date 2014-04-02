@@ -112,7 +112,6 @@ angular.module('bu').directive('buPages', [
     }
     function linker(scope, element, attrs, ctrl) {
       spec = angular.extend(scope, {
-        options : scope.$eval(attrs.buPages),
         element : element,
         attrs   : attrs,
       });
@@ -130,7 +129,7 @@ angular.module('bu').directive('buPages', [
 
     return {
       restrict   : 'A',
-      require    : '^buWindow',
+      require    : '^buScreen',
       controller : controller,
       link       : linker,
     };
