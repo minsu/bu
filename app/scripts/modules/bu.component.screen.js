@@ -30,6 +30,14 @@ angular.module('bu').directive('buScreen', [
         $log.debug('[bu.screen] registering a pages');
         $scope.pages = spec;
       }
+      function registerPage(spec) {
+        if (angular.isDefined($scope.pages) ||
+            angular.isDefined($scope.page)) {
+          console.assert(false, 'only one page/pages can be registered');
+        }
+        $log.debug('[bu.screen] registering a page');
+        $scope.page = spec;
+      }
       function registerPanel(spec) {
         if (!angular.isDefined(spec.position)) {
           console.assert(false, "a panel must have position value");
@@ -38,6 +46,7 @@ angular.module('bu').directive('buScreen', [
         $scope.panels.push(spec);
       }
 
+      $scope.registerPage  = registerPage;
       $scope.registerPages = registerPages;
       $scope.registerPanel = registerPanel;
 
@@ -45,46 +54,34 @@ angular.module('bu').directive('buScreen', [
     }
 
     function linker(scope, element, attrs, ctrl) {
-      var panelUnregister;
+      var unregister;
 
       function setState(state) {
         var panelControl;
 
         switch (state) {
         case 'active':
-          /* event subscription */
-          if (angular.isDefined(scope.pages.keyboard)) {
-            $keyboard.subscribe(scope.pages.keyboard);
-          }
-
-          /* panel control */
           if (scope.panels.length > 0) {
-            var panelControl = $factory.PanelControl();
-
-            panelControl.init(
-              scope.pages, scope.panels, scope.options);
-
-            scope.panelControl= panelControl;
-            scope.openPanel   = panelControl.open;
-            scope.closePanel  = panelControl.close;
-            scope.togglePanel = panelControl.toggle;
-
-            panelControl.reset();
-
-            /* events */
-            panelUnregister = $bu.wait('bu.screen', 'BU_EVENT_UI:RESIZE', panelControl.reset);
+            /* event subscription */
+            if (angular.isDefined(scope.pages) &&
+                angular.isDefined(scope.pages.keyboard)) {
+              $keyboard.subscribe(scope.pages.keyboard);
+            }
+            unregister = $bu.wait('bu.screen', 'BU_EVENT_UI:RESIZE', scope.resetPanels);
             Hammer(element[0]).on("tap", handleTap);
           }
           break;
-        case 'ready': break;
+        case 'ready':
+          break;
         case 'inactive':
           /* event unsubscription */
-          if (angular.isDefined(scope.pages.keyboard)) {
-            $keyboard.unsubscribe(scope.pages.keyboard);
-          }
           if (scope.panels.length > 0) {
-            if (angular.isDefined(panelUnregister)) panelUnregister();
+            if (angular.isDefined(unregister)) unregister();
             Hammer(element[0]).off("tap")
+          }
+          if (angular.isDefined(scope.pages) &&
+              angular.isDefined(scope.pages.keyboard)) {
+            $keyboard.unsubscribe(scope.pages.keyboard);
           }
           break;
         }
@@ -98,13 +95,18 @@ angular.module('bu').directive('buScreen', [
         }
       }
       function getReadyActivate(direction) {
+        var bucket = [];
+        if (scope.panels.length > 0) {
+          bucket.push(scope.resetPanels());
+        }
         if (direction === 'right') {
-          return $bu.x(element, (-1) * 0.25 * element.width(), 0);
+          bucket.push($bu.x(element, (-1) * 0.25 * element.width(), 0));
         } else if (direction === 'left') {
-          return $bu.x(element, 0.75 * element.width(), 0);
+          bucket.push($bu.x(element, 0.75 * element.width(), 0));
         } else {
           console.assert(false);
         }
+        return $q.all(bucket);
       }
       function activate() {
         return $bu.x(element, 0);
@@ -151,13 +153,26 @@ angular.module('bu').directive('buScreen', [
       scope.state   = undefined;
       scope.name    = attrs.buScreen;
       scope.options = $utility.createOptionObject(SPEC, attrs);
-      $log.debug(scope.options);
 
       scope.setState           = setState;
       scope.getReadyActivate   = getReadyActivate;
       scope.getReadyDeactivate = getReadyDeactivate;
       scope.activate           = activate;
       scope.deactivate         = deactivate;
+
+      /* panel control */
+      if (scope.panels.length > 0) {
+        scope.panelControl = $factory.panelControl(
+          scope.pages, scope.panels, scope.options
+        );
+
+        angular.extend(scope, {
+          resetPanels: scope.panelControl.reset,
+          openPanel  : scope.panelControl.open,
+          closePanel : scope.panelControl.close,
+          togglePanel: scope.panelControl.toggle,
+        });
+      }
 
       /* register */
       angular.extend(scope, {

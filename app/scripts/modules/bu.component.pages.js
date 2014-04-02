@@ -111,20 +111,20 @@ angular.module('bu').directive('buPages', [
       return $scope;
     }
     function linker(scope, element, attrs, ctrl) {
-      spec = angular.extend(scope, {
+
+      angular.extend(scope, {
         element : element,
         attrs   : attrs,
       });
-
-      if (scope.pages.length == 3) {
-        spec = angular.extend(spec, {
+      if (scope.pages.length === 3) {
+        angular.extend(scope, {
           keyboard: {
             left : scope.prevPage,
             right: scope.nextPage,
           }
-        })
+        });
       }
-      ctrl.registerPages(spec);
+      ctrl.registerPages(scope);
     }
 
     return {

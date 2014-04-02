@@ -7,22 +7,15 @@ angular.module('bu')
     var service = {};
 
     //---------------------------------------------------------------
-    // PanelControl
+    // panelControl
     //---------------------------------------------------------------
-    function PanelControl() {
-      var self = this;
+    function panelControl(owner, panels, config) {
+      var obj;
+      var owner = owner, panels = panels, config = config;
 
-      this.panels = undefined;
-      this.pages  = undefined;
-      this.config = undefined;
-
-      function init(pages, panels, config) {
-        self.panels = panels;
-        self.pages  = pages;
-        self.config = config;
-      }
+      console.assert(owner && panels.length > 0 && config);
       function get(pos) {
-        return _.find(self.panels, {position: pos});
+        return _.find(panels, {position: pos});
       }
       function state(pos) {
         var panel = get(pos);
@@ -34,14 +27,14 @@ angular.module('bu')
         if (angular.isDefined(panel)) {
           return panel.element.width();
         } else {
-          $log.error('[bu.$factory:PanelControl] no matching panel found: ' + pos);
+          $log.error('[bu.$factory:panelControl] no matching panel found: ' + pos);
           return 0;
         }
       }
       function revert() {
         var bucket = [];
-        if (self.config[$state.getSize()] === 'none') {
-          angular.forEach(self.panels, function(panel) {
+        if (config[$state.getSize()] === 'none') {
+          angular.forEach(panels, function(panel) {
             if (panel.state === 'active') {
               bucket.push(close(panel.position));
             }
@@ -59,15 +52,15 @@ angular.module('bu')
         // trivial cases //
         console.assert(pos === 'left' || pos === 'right');
         if (!angular.isDefined(panel)) {
-          $log.debug('[bu.$factory:PanelControl] no panel found: ' + pos);
+          $log.debug('[bu.$factory:panelControl] no panel found: ' + pos);
           return $q.when(true);
         }
         if (panel.state !== 'inactive') {
-          $log.debug('[bu.$factory:PanelControl] no need to open: ' + pos + '(' + panel.state + ')');
+          $log.debug('[bu.$factory:panelControl] no need to open: ' + pos + '(' + panel.state + ')');
           return $q.when(true);
         }
 
-        switch (self.config[$state.getSize()]) {
+        switch (config[$state.getSize()]) {
         case 'both':
           console.assert(false); /* handled above as a trivial case */
 
@@ -87,7 +80,7 @@ angular.module('bu')
             } else { console.assert(false); }
 
             return $q.all([
-              $bu.x(self.pages.element, offset, speed),
+              $bu.x(owner.element, offset, speed),
               panel.activate(speed),
               other.deactivate(speed),
             ]);
@@ -110,10 +103,10 @@ angular.module('bu')
             } else if (pos === 'right') {
               offset = (-1) * width('right');
             }
-            $log.debug('self.pages.element');
-            $log.debug(self.pages.element[0]);
+            $log.debug('owner.element');
+            $log.debug(owner.element[0]);
             return $q.all([
-              $bu.x(self.pages.element, offset, speed),
+              $bu.x(owner.element, offset, speed),
               panel.activate(speed),
             ]);
           })
@@ -136,15 +129,15 @@ angular.module('bu')
         // trivial cases //
         console.assert(pos === 'left' || pos === 'right');
         if (!angular.isDefined(panel)) {
-          $log.debug('[bu.$factory:PanelControl] no panel found: ' + position);
+          $log.debug('[bu.$factory:panelControl] no panel found: ' + position);
           return $q.when(true);
         }
         if (panel.state !== 'active') {
-          $log.debug('[bu.$factory:PanelControl] no need to close: ' + position + '(' + panel.state + ')');
+          $log.debug('[bu.$factory:panelControl] no need to close: ' + position + '(' + panel.state + ')');
           return $q.when(true);
         }
 
-        switch (self.config[$state.getSize()]) {
+        switch (config[$state.getSize()]) {
         case 'both':
           console.assert(false); /* handled above as a trivial case */
 
@@ -161,7 +154,7 @@ angular.module('bu')
               offset = width('left');
             }
             return $q.all([
-              $bu.x(self.pages.element, offset),
+              $bu.x(owner.element, offset),
               panel.deactivate(speed),
               other.activate(speed),
             ]);
@@ -175,7 +168,7 @@ angular.module('bu')
           return panel.getReadyDeactivate()
           .then(function() {
             return $q.all([
-              $bu.x(self.pages.element, 0),
+              $bu.x(owner.element, 0),
               panel.deactivate(speed),
             ]);
           })
@@ -196,24 +189,24 @@ angular.module('bu')
         } else if (panel.state === 'inactive') {
           return open(pos);
         } else {
-          console.assert(false);
+          $log.debug('[bu.$factory:controlPanel] ineffective toggle: ' + panel.state);
         }
       }
       function reset() {
-        $log.debug('[bu.$factory:PanelControl] reset positions');
-        switch (self.config[$state.getSize()]) {
+        $log.debug('[bu.$factory:panelControl] reset positions');
+        switch (config[$state.getSize()]) {
         case 'both':
           console.assert(angular.isDefined(get('left')));
           console.assert(angular.isDefined(get('right')));
           get('left').setState('enabled');
           get('right').setState('enabled');
 
-          self.pages.element.width(self.pages.element.parent().width() -
+          owner.element.width(owner.element.parent().width() -
             (width('left') + width('right')));
           return $q.all([
             $bu.x(get('left').element, 0, 0),
-            $bu.x(get('right').element, self.pages.element.parent().width() - width('right'), 0),
-            $bu.x(self.pages.element, width('left'), 0),
+            $bu.x(get('right').element, owner.element.parent().width() - width('right'), 0),
+            $bu.x(owner.element, width('left'), 0),
           ]);
         case 'left':
           console.assert(angular.isDefined(get('left')));
@@ -223,10 +216,10 @@ angular.module('bu')
           } else {
             get('left').setState('enabled');
           }
-          self.pages.element.width(self.pages.element.parent().width() - width('left'));
+          owner.element.width(owner.element.parent().width() - width('left'));
           return $q.all([
             $bu.x(get('left').element, 0, 0),
-            $bu.x(self.pages.element, width('left'), 0),
+            $bu.x(owner.element, width('left'), 0),
             ]);
         case 'right':
           if (angular.isDefined(get('left'))) {
@@ -235,35 +228,35 @@ angular.module('bu')
           } else {
             get('right').setState('enabled');
           }
-          self.pages.element.width(self.pages.element.parent().width() - width('right'));
+          owner.element.width(owner.element.parent().width() - width('right'));
           return $q.all([
-            $bu.x(get('right').element, self.pages.element.parent().width() - width('right'), 0),
-            $bu.x(self.pages.element, 0, 0),
+            $bu.x(get('right').element, owner.element.parent().width() - width('right'), 0),
+            $bu.x(owner.element, 0, 0),
           ]);
         case 'none':
-          angular.forEach(self.panels, function(panel) {
+          angular.forEach(panels, function(panel) {
             panel.setState('inactive');
           });
-          self.pages.element.width(self.pages.element.parent().width());
-          return $bu.x(self.pages.element, 0, 0);
+          owner.element.width(owner.element.parent().width());
+          return $bu.x(owner.element, 0, 0);
         default:
           console.assert(false);
         }
       }
 
       // INTERFACES //
-      this.init   = init;
-      this.reset  = reset;
-      this.revert = revert;
-      this.open   = open;
-      this.close  = close;
-      this.toggle = toggle;
-
-      return this;
+      obj = {
+        reset : reset,
+        revert: revert,
+        open  : open,
+        close : close,
+        toggle: toggle,
+      }
+      return obj;
     }
     //---------------------------------------------------------------
 
-    service.PanelControl = PanelControl;
+    service.panelControl = panelControl;
     return service;
   }
 ]);
