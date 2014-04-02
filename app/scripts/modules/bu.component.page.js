@@ -3,9 +3,15 @@
 //-------------------------------------------------------------------
 angular.module('bu').directive('buPage', [
   '$log', '$q',
-  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events',
+  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events', 'bu.$utility',
 
-  function($log, $q, $settings, $bu, $state, $e) {
+  function($log, $q, $settings, $bu, $state, $e, $utility) {
+
+    var SPEC = {
+      name    : 'buPage',
+      options : [],
+      defaults: {},
+    };
 
     function linker(scope, element, attrs, ctrl) {
       var spec;
@@ -109,27 +115,31 @@ angular.module('bu').directive('buPage', [
 
       scope.position = undefined;
       scope.state    = undefined;
+      scope.options  = $utility.createOptionObject(SPEC, attrs);
 
-      /* touch event */
-      Hammer(element[0], {drag_lock_to_axis: true}).on(
-        "release dragleft dragright swipeleft swiperight",
-        handleTouch
-      );
-      Hammer(element[0]).on("tap", handleTap);
 
       /* register */
       spec = angular.extend(scope, {
-        options: scope.$eval(attrs.buPage),
         element: element,
         attrs  : attrs,
       });
-      ctrl.registerPage(spec);
+
+      if (angular.isDefined(ctrl)) {
+        ctrl.registerPage(spec);
+
+        /* touch event */
+        Hammer(element[0], {drag_lock_to_axis: true}).on(
+          "release dragleft dragright swipeleft swiperight",
+          handleTouch
+        );
+        Hammer(element[0]).on("tap", handleTap);
+      }
     }
 
     return {
       restrict   : 'A',
-      scope      : {},
-      require    : '^buPages',
+      scope      : $utility.createScopeObject(SPEC),
+      require    : '?^buPages',
       templateUrl: 'bu.container.html',
       replace    : true,
       transclude : true,

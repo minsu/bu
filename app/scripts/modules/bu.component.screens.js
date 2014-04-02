@@ -5,30 +5,43 @@
 //   for the application, no need to create `screens`.
 //-------------------------------------------------------------------
 angular.module('bu').directive('buScreens', [
-  '$log', '$timeout', '$q', 'bu.$service', 'bu.$settings', 'bu.$state',
+  '$log', '$timeout', '$q',
+  'bu.$service', 'bu.$settings', 'bu.$state', 'bu.$utility',
 
-  function($log, $timeout, $q, $bu, $settings, $state) {
+  function($log, $timeout, $q, $bu, $settings, $state, $utility) {
+
+  	var SPEC = {
+			name    : 'buScreens',
+			options : [],
+			defaults: {},
+  	};
 
   	function controller($scope, $element) {
   		var screens = [];
 
-	    function getScreen(name) {
-	      return _.find(screens, {options: {name: name}});
-	    }
 	    function registerScreen(spec) {
-	    	if (!angular.isDefined(spec.options) ||
-	    		  !angular.isDefined(spec.options.name)) {
+	    	if (!angular.isDefined(spec.name)) {
 	    		console.assert(false,
 	    			'screen must have a name to be registed to screens');
 	    	}
-        $log.debug('[bu.screens] registering a screen: ' + spec.options.name);
+        $log.debug('[bu.screens] registering a screen: ' + spec.name);
         screens.push(spec);
         $log.debug('[bu.screens] total screens: ' + screens.length);
 	    }
 
+			$scope.screens = screens;
+			$scope.registerScreen = registerScreen;
+
+	    return $scope;
+  	}
+
+  	function linker(scope, element, attrs) {
+	    function getScreen(name) {
+	      return _.find(scope.screens, {name: name});
+	    }
 	    function activate(name) {
 	      var defer = $q.defer();
-	      var from  = _.find(screens, {state: 'active'});
+	      var from  = _.find(scope.screens, {state: 'active'});
 	      var to    = getScreen(name);
 
 	      var direction = $settings.BU_SLIDE_DIRECTION;
@@ -43,7 +56,7 @@ angular.module('bu').directive('buScreens', [
 
 	      if (angular.isDefined(from)) {
 	        $log.debug('[bu.screens] screen change: ' +
-	          from.options.name + ' => ' + to.options.name);
+	          from.name + ' => ' + to.name);
 
 	        to.setState('ready');
 	        $q.all([
@@ -62,8 +75,8 @@ angular.module('bu').directive('buScreens', [
 	      } else {
 	        $log.debug('[bu.$state] initial screen setup');
 
-	        angular.forEach(screens, function(screen) {
-	          if (screen.options.name === name) {
+	        angular.forEach(scope.screens, function(screen) {
+	          if (screen.name === name) {
 	          	screen.setState('active');
 	          } else {
 	          	screen.setState('inactive');
@@ -74,27 +87,20 @@ angular.module('bu').directive('buScreens', [
 	      return defer.promise;
 	    };
 
-			$scope.screens        = screens;
-			$scope.getScreen      = getScreen;
-			$scope.activate       = activate;
-			$scope.registerScreen = registerScreen;
-
-	    return $scope;
-  	}
-
-  	function linker(scope, element, attrs) {
-  		var spec;
+			scope.options   = $utility.createOptionObject(SPEC, attrs);
+			scope.getScreen = getScreen;
+			scope.activate  = activate;
 
       $timeout(function() {
         $bu.fire('bu.screens', 'BU_EVENT_UI:READY');
       });
 
       /* register as root element */
-      spec = angular.extend(scope, {
+      angular.extend(scope, {
         element: element,
         attrs  : attrs,
       });
-			$state.registerRoot(spec);
+			$state.registerRoot(scope);
   	}
 
   	return {

@@ -10,35 +10,3 @@
   </div>
 </div>
 </script>
-
-
-<script type="text/ng-template" id="bu.component.screen.html">
-<div class="bu screen"
-     ng-show="state === 'active' || state === 'ready'"
-     ng-style="{'z-index': state === 'active' && 2}"
-     ng-transclude>
-</div>
-</script>
-
-<script type="text/ng-template" id="bu.component.page.html">
-<div class="bu page"
-     ng-show="state === 'active' || state === 'ready'"
-     ng-style="{'z-index': state === 'active' && 2}" ng-transclude>
-</div>
-</script>
-
-<script type="text/ng-template" id="bu.component.window.html">
-<div class="bu window" style="z-index:1" ng-transclude></div>
-</script>
-
-<script type="text/ng-template" id="bu.component.panel.html">
-<div class="bu panel {{ state }} {{ options.position }}"
-     ng-style="{ 'width'  : options.width + 'px' }" ng-transclude>
-</div>
-</script>
-
-<script type="text/ng-template" id="bu.component.flash.html">
-<div class="bu window flash {{ state }}"
-     ng-style="{'z-index': zindex()}" ng-transclude>
-</div>
-</script>

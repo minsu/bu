@@ -4,9 +4,20 @@
 
 angular.module('bu').directive('buScreen', [
   '$log', '$q', '$timeout',
-  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events', 'bu.$keyboard', 'bu.$factory',
+  'bu.$settings', 'bu.$service', 'bu.$state', 'bu.$events', 'bu.$keyboard', 'bu.$factory', 'bu.$utility',
 
-  function($log, $q, $timeout, $settings, $bu, $state, $e, $keyboard, $factory) {
+  function($log, $q, $timeout, $settings,
+    $bu, $state, $e, $keyboard, $factory, $utility) {
+
+    var SPEC = {
+      name    : 'buScreen',
+      options : ['small', 'medium', 'large'],
+      defaults: {
+        small : 'none',
+        medium: 'none',
+        large : 'none',
+      },
+    };
 
     function controller($scope, $element) {
       $scope.pages  = undefined;
@@ -34,7 +45,7 @@ angular.module('bu').directive('buScreen', [
     }
 
     function linker(scope, element, attrs, ctrl) {
-      var spec, panelUnregister;
+      var panelUnregister;
 
       function setState(state) {
         var panelControl;
@@ -50,10 +61,8 @@ angular.module('bu').directive('buScreen', [
           if (scope.panels.length > 0) {
             var panelControl = $factory.PanelControl();
 
-            panelControl.init(scope.pages, scope.panels,
-              angular.extend($settings.BU_PANEL_CONFIG, scope.options.panels));
-            $log.debug('what')
-            $log.debug(angular.extend($settings.BU_PANEL_CONFIG, scope.options.panels))
+            panelControl.init(
+              scope.pages, scope.panels, scope.options);
 
             scope.panelControl= panelControl;
             scope.openPanel   = panelControl.open;
@@ -139,8 +148,10 @@ angular.module('bu').directive('buScreen', [
           return scope.panelControl.revert();
         }
       }
-      scope.state              = undefined;
-      scope.options            = scope.$eval(attrs.buScreen);
+      scope.state   = undefined;
+      scope.name    = attrs.buScreen;
+      scope.options = $utility.createOptionObject(SPEC, attrs);
+      $log.debug(scope.options);
 
       scope.setState           = setState;
       scope.getReadyActivate   = getReadyActivate;
@@ -149,18 +160,16 @@ angular.module('bu').directive('buScreen', [
       scope.deactivate         = deactivate;
 
       /* register */
-      spec = angular.extend(scope, {
+      angular.extend(scope, {
         element: element,
         attrs  : attrs,
       });
-      $log.debug('spec');
-      $log.debug(spec);
-      ctrl.registerScreen(spec);
+      ctrl.registerScreen(scope);
     }
 
     return {
       restrict   : 'A',
-      scope      : {},
+      scope      : $utility.createScopeObject(SPEC),
       templateUrl: 'bu.container.html',
       require    : '^buScreens',
       replace    : true,

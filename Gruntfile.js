@@ -166,6 +166,8 @@ module.exports = function(grunt) {
             'app/scripts/modules/bu.actions.js',
             'app/scripts/modules/bu.events.js',
             'app/scripts/modules/bu.service.js',
+            'app/scripts/modules/bu.factory.js',
+            'app/scripts/modules/bu.utility.js',
             'app/scripts/modules/bu.keyboard.js',
             'app/scripts/modules/bu.component.bu.js',
             'app/scripts/modules/bu.component.misc.js',

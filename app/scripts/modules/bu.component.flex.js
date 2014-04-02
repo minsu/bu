@@ -68,9 +68,6 @@ angular.module('bu').directive('buFlex', [
 				value && reposition();
 			}
 
-			// (NOTE)
-			// width change may require column reposition due to
-			// resized elements taking up different height
 			if (attrs.buFlex === 'row') {
 				scope.$watch(function() {
 					return element[0].offsetWidth;
@@ -79,6 +76,8 @@ angular.module('bu').directive('buFlex', [
 				scope.$watch(function() {
 					return element[0].offsetHeight;
 				}, _.throttle(resizeHandler, 1000));
+			} else {
+				console.assert(false);
 			}
 		}
 		return {
